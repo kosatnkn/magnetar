@@ -1,0 +1,187 @@
+<div class="container" id="divTaxiModels">
+
+    <!-- Module Title ------------------------------------------------------------------------------------------------->
+    <h1 class="text-muted">Template</h1>
+    <br>
+    <br>
+    <!-- /Module Title ------------------------------------------------------------------------------------------------>
+
+    <!-- Search and Add New ------------------------------------------------------------------------------------------->
+    <div class="row">
+        <div class="col-md-10">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group pmd-textfield">
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-search fa-lg" aria-hidden="true"></i></div>
+                            <input type="text" id="txtSearch" name="txtSearch" class="form-control" placeholder="Search">
+                            <span class="pmd-textfield-focused"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <button type="button" id="btnSearch" name="btnSearch" class="btn btn-primary pmd-btn-flat pmd-ripple-effect">Search</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-block btn-primary pmd-btn-raised pmd-ripple-effect" data-toggle="modal" data-target="#mdlView">
+                Add New
+            </button>
+        </div>
+    </div>
+    <!-- /Search and Add New ------------------------------------------------------------------------------------------>
+
+    <!-- Grid --------------------------------------------------------------------------------------------------------->
+    <div class="pmd-card pmd-z-depth">
+        <div class="table-responsive">
+            <table cellspacing="0" cellpadding="0" class="table pmd-table" id="grdTemplate" name="grdTemplate">
+                <thead>
+                <tr>
+                    <th width="10%">STATUS</th>
+                    <th width="75%">MODEL NAME</th>
+                    <th width="15%"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <span class="label label-success">Active</span>
+                    </td>
+                    <td>Car</td>
+                    <td>
+                        <button class="btn btn-sm pmd-btn-fab pmd-btn-flat pmd-ripple-effect btn-primary" type="button"
+                                data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil fa-fw fa-lg"></i></button>
+
+                        <button class="btn btn-sm pmd-btn-fab pmd-btn-flat pmd-ripple-effect btn-success" type="button"
+                                data-toggle="tooltip" data-placement="top" title="Activate"><i class="fa fa-check fa-fw fa-lg"></i></button>
+
+                        <button class="btn btn-sm pmd-btn-fab pmd-btn-flat pmd-ripple-effect btn-danger" type="button"
+                                data-toggle="tooltip" data-placement="top" title="Deactivate"><i class="fa fa-ban fa-fw fa-lg"></i></button>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <span class="label label-danger">Inactive</span>
+                    </td>
+                    <td>Tuk</td>
+                    <td>
+                        <button class="btn btn-sm pmd-btn-fab pmd-btn-flat pmd-ripple-effect btn-primary" type="button"
+                                data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil fa-fw fa-lg"></i></button>
+
+                        <button class="btn btn-sm pmd-btn-fab pmd-btn-flat pmd-ripple-effect btn-success" type="button"
+                                data-toggle="tooltip" data-placement="top" title="Activate"><i class="fa fa-check fa-fw fa-lg"></i></button>
+
+                        <button class="btn btn-sm pmd-btn-fab pmd-btn-flat pmd-ripple-effect btn-danger" type="button"
+                                data-toggle="tooltip" data-placement="top" title="Deactivate"><i class="fa fa-ban fa-fw fa-lg"></i></button>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- /Grid -------------------------------------------------------------------------------------------------------->
+
+    <!-- Add/Edit Modal ----------------------------------------------------------------------------------------------->
+    <div class="modal fade" id="mdlView" tabindex="-1" role="document" aria-labelledby="mdlView" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header pmd-modal-bordered">
+                    <h2 class="modal-title text-muted">ADD NEW</h2>
+                </div>
+                <form id="frmCreate">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-3 text-muted">
+                                    Model Name&nbsp;
+                                    <a href="javascript:void(0);">
+                                        <i class="fa fa-question-circle-o fa-fw text-info cu"
+                                           data-container="body" data-trigger="hover" data-toggle="popover" data-placement="right"
+                                           data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus."
+                                           title="Model Name" aria-describedby="popover542877"></i>
+                                    </a>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" id="txtName" name="txtName">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-3 text-muted">
+                                    Base Fare
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">Rs.</span>
+                                        <input type="text" class="form-control" id="txtBaseFare" name="txtBaseFare">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-3 text-muted">
+                                    Minimum Distance
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="txtMinDistance" name="txtMinDistance">
+                                        <span class="input-group-addon">km</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-3 text-muted">
+                                    Minimum Fare
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">Rs.</span>
+                                        <input type="text" class="form-control" id="txtMinFare" name="txtMinFare">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="btnCancel" class="btn btn-default">Cancel</button>
+                        <button type="button" id="btnSave" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- /Add/Edit Modal ---------------------------------------------------------------------------------------------->
+
+</div>
+
+
+<script>
+
+    App.Modules.Template = (function()
+    {
+        // code for main module
+        function init()
+        {
+            // init tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+
+            // init popover
+            $('[data-toggle="popover"]').popover();
+
+            console.log("Template module initiated");
+        }
+
+        return {
+            init: init
+        };
+
+    })();
+
+</script>

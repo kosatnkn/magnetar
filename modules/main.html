@@ -1,0 +1,23 @@
+<div class="container-fluid">
+    <table>
+        Main Module
+    </table>
+</div>
+
+<script>
+
+    App.Modules.Main = (function()
+    {
+        // code for main module
+        function init()
+        {
+            console.log("Main module initiated");
+        }
+
+        return {
+            init: init
+        };
+
+    })();
+
+</script>

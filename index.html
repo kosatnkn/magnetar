@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title>Magnetar</title>
+
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel='shortcut icon' href='favicon.ico' type='image/x-icon'/>
+
+        <!-- Bootstrap CSS -->
+        <!--<link href="lib/css/bootstrap.min.css" rel="stylesheet">-->
+        <link href="lib/css/bootstrap-yeti.min.css" rel="stylesheet">
+        <link href="lib/css/bootstrap-yeti-custom.css" rel="stylesheet">
+        <link href="lib/css/propeller.min.css" rel="stylesheet">
+        <link href="lib/css/propeller-custom.css" rel="stylesheet">
+        <link href="lib/css/font-awesome.min.css" rel="stylesheet">
+        <link href="lib/css/animate.css" rel="stylesheet">
+
+        <!-- Google Icon Font -->
+        <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    </head>
+
+    <body>
+        <!-- Header --------------------------------------------------------------------------------------------------->
+        <nav id="navMain" class="navbar navbar-fixed-top navbar-default pmd-navbar pmd-z-depth-2 invisible">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a href="javascript:void(0);" class="btn btn-sm pmd-btn-fab pmd-btn-flat pmd-ripple-effect btn-primary pull-left margin-r8 pmd-sidebar-toggle">
+                        <i class="material-icons md-light">menu</i>
+                    </a>
+                    <a class="navbar-brand" href="javascript:void(0);">Magnetar</a>
+                </div>
+                <div>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown pmd-dropdown">
+                            <a aria-expanded="false" role="button" data-toggle="dropdown" data-sidebar="true" class="pmd-ripple-effect dropdown-toggle" href="javascript:void(0);">
+                                <span>
+                                    <i class="fa fa-user-circle fa-2x fa-lg" aria-hidden="true"></i>&nbsp;&nbsp;
+                                    <span id="lblUserName">User Name</span>&nbsp;&nbsp;
+                                    <i class="fa fa-angle-down fa-lg" aria-hidden="true"></i>
+                                </span>
+                            </a>
+                            <ul role="menu" class="dropdown-menu dropdown-menu-right">
+                                <li>
+                                    <a class="pmd-ripple-effect" href="#settings">
+                                        <i class="fa fa-wrench fa-lg fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;Settings
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="pmd-ripple-effect" href="#feedback">
+                                        <i class="fa fa-commenting fa-lg fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;Feedback
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a id="lnkLogout" class="pmd-ripple-effect" href="javascript:void(0);">
+                                        <i class="fa fa-power-off fa-lg fa-fw" aria-hidden="true"></i>&nbsp;&nbsp;Log out
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- /Header -------------------------------------------------------------------------------------------------->
+
+        <!-- Side-nav ------------------------------------------------------------------------------------------------->
+        <aside id="divSideNav" class="pmd-sidebar sidebar-custom sidebar-default pmd-sidebar-slide-push pmd-sidebar-left pmd-z-depth-2 sidebar-hide-custom" role="navigation" style="position: absolute;">
+
+        </aside>
+        <!-- /Side-nav ------------------------------------------------------------------------------------------------>
+
+        <!-- Container ------------------------------------------------------------------------------------------------>
+        <div id="divMain" class="container-fluid">
+
+        </div>
+        <!-- /Container ----------------------------------------------------------------------------------------------->
+
+        <!-- Login ---------------------------------------------------------------------------------------------------->
+        <div class="modal fade" id="mdlLogin" tabindex="-1" role="dialog" aria-labelledby="mdlLogin" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form id="frmLogin">
+                        <div class="modal-header">
+                            <h1 class="modal-title text-muted">LOGIN</h1>
+                        </div>
+                        <div class="modal-body">
+                            <form class="form-horizontal">
+                                <div class="form-group pmd-textfield">
+                                    <label for="txtEmail" class="control-label">Email</label>
+                                    <input type="email" id="txtEmail" name="txtEmail" class="form-control"><span class="pmd-textfield-focused"></span>
+                                </div>
+                                <div class="form-group pmd-textfield">
+                                    <label for="txtPassword" class="control-label">Password</label>
+                                    <input type="password" id="txtPassword" name="txtPassword" class="form-control"><span class="pmd-textfield-focused"></span>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="pmd-modal-action text-right">
+                            <button type="button" id="btnLogin" class="btn pmd-btn-raised pmd-ripple-effect btn-primary">Login</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /Login --------------------------------------------------------------------------------------------------->
+
+        <!-- jQuery first, then Bootstrap JS. -->
+        <script src="lib/js/jquery/jquery-3.1.1.min.js"></script>
+        <script src="lib/js/jwt/jwt-decode.min.js"></script>
+        <script src="lib/js/bootstrap/bootstrap.min.js"></script>
+        <script src="lib/js/propeller/propeller.min.js"></script>
+        <script src="lib/js/notify/bootstrap-notify.min.js"></script>
+        <script src="lib/js/validator/jquery.validate.min.js"></script>
+        <script src="lib/js/validator/additional-methods.js"></script>
+
+        <script src="core/app.js"></script>
+    </body>
+
+</html>
+
+<script>
+
+    $(document).ready(function()
+    {
+        // start the app
+        App.run();
+
+    });
+
+</script>

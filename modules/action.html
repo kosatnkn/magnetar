@@ -1,0 +1,529 @@
+<div class="container" id="divAction">
+
+    <!-- Module Title ------------------------------------------------------------------------------------------------->
+    <h1 class="text-muted">Actions</h1>
+    <br>
+    <!-- /Module Title ------------------------------------------------------------------------------------------------>
+
+    <!-- Search and Add New ------------------------------------------------------------------------------------------->
+    <div class="row">
+        <div class="col-md-10">
+            &nbsp;
+        </div>
+        <div class="col-md-2">
+            <button id="btnAdd" name="btnAdd" class="btn btn-block btn-primary pmd-btn-raised pmd-ripple-effect">
+                Add New
+            </button>
+        </div>
+    </div>
+    <!-- /Search and Add New ------------------------------------------------------------------------------------------>
+
+    <br>
+
+    <!-- Grid --------------------------------------------------------------------------------------------------------->
+    <div class="pmd-card pmd-z-depth">
+        <div class="table-responsive">
+            <table class="table pmd-table" id="grdActions" name="grdActions">
+                <thead>
+                <tr>
+                    <th width="15%">NAME</th>
+                    <th width="75%">DESCRIPTION</th>
+                    <th width="10%">ACTIONS</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <!-- rows -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- /Grid -------------------------------------------------------------------------------------------------------->
+
+    <!-- Add/Edit Modal ----------------------------------------------------------------------------------------------->
+    <div class="modal fade" id="mdlAddEdit" tabindex="-1" role="document" aria-labelledby="mdlAddEdit" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header pmd-modal-bordered">
+                    <h2 class="modal-title text-muted">TITLE</h2>
+                </div>
+                <form id="frmAddEdit">
+
+                    <div class="modal-body">
+
+                        <!-- id and name -->
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-4 text-muted">
+                                    Name
+                                    <span>
+                                        <i class="fa fa-question-circle-o fa-fw text-info"
+                                           data-container="body" data-trigger="hover" data-toggle="popover" data-placement="right"
+                                           data-content="Give the action a unique name.
+                                           The name should consist of lowercase characters and underscores only.
+                                           (ex: example_action)."
+                                           title="Action Name"></i>
+                                    </span>
+                                </div>
+                                <div class="col-md-8">
+                                    <input type="hidden" id="hdnId" name="hdnId">
+                                    <input type="text" class="form-control" id="txtName" name="txtName">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- description -->
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-4 text-muted">
+                                    Description
+                                    <span>
+                                        <i class="fa fa-question-circle-o fa-fw text-info"
+                                           data-container="body" data-trigger="hover" data-toggle="popover" data-placement="right"
+                                           data-content="Give a summarized description for the action."
+                                           title="Action Description"></i>
+                                    </span>
+                                </div>
+                                <div class="col-md-8">
+                                    <textarea type="text" class="form-control" id="txtDesc" name="txtDesc"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="btnCancel" name="btnCancel" class="btn btn-default">Cancel</button>
+                        <button type="button" id="btnSave" name="btnSave" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- /Add/Edit Modal ---------------------------------------------------------------------------------------------->
+
+</div>
+
+
+<script>
+
+    App.Modules.Action = (function()
+    {
+        // ________________________________________________________________________________________________ Declarations
+
+        // permissions
+        var _arrPermissions = [];
+
+        // get container
+        const _$divMain = $('#divAction');
+
+        // locate elements in container
+        const _$btnAdd = _$divMain.find('#btnAdd');
+        const _$grdActions = _$divMain.find('#grdActions');
+        const _$mdlAddEdit = _$divMain.find('#mdlAddEdit');
+
+        const _$frmAddEdit = _$mdlAddEdit.find('#frmAddEdit');
+        const _$hdnId = _$mdlAddEdit.find('#hdnId');
+        const _$txtName = _$mdlAddEdit.find('#txtName');
+        const _$txtDesc = _$mdlAddEdit.find('#txtDesc');
+
+        const _$btnCancel = _$mdlAddEdit.find('#btnCancel');
+        const _$btnSave = _$mdlAddEdit.find('#btnSave');
+
+        // validation rules
+        var _objValidator = null;
+
+        const _objValidationRules = {
+            rules: {
+                txtName: {
+                    required: true,
+                    pattern: /^[a-z_]+$/ // lowercase and underscore only
+                },
+                txtDesc: {
+                    required: true
+                }
+            },
+            messages: {
+                txtName: {
+                    pattern: "Use 'lowercase' words and '_' only. (ex: example_action)"
+                }
+            }
+        };
+
+        // determine whether add or edit mode to be used with mdlAddEdit (NOTE: Add = true, Edit = false)
+        var _blnAdd = true;
+
+        // ____________________________________________________________________________________________ UI Event Binding
+
+        _$btnAdd.on('click', function(event) { _showAddEditModel('add'); });
+
+        _$grdActions.on('click', '.action-edit', function(event) { _getItem($(this)); });
+
+        _$btnCancel.on('click', function(event) { _hideAddEditModel(); });
+        _$btnSave.on('click', function(event) { _save(); });
+
+
+        // ___________________________________________________________________________ REST Event Binding and Delegation
+
+        // listen to response queue changes
+        App.Events.on('responseQueueUpdated', function(strKey) { _delegateResponse(strKey); });
+
+
+        // delegate the response
+        function _delegateResponse(strKey)
+        {
+            // get the response
+            const objResponse = App.Request.getResponseFor(strKey);
+
+            switch(strKey)
+            {
+                case 'action_list':
+                    _receivedList(objResponse);
+                    break;
+
+                case 'action_item':
+                    _receivedItem(objResponse);
+                    break;
+
+                case 'action_item_add':
+                    _added(objResponse);
+                    break;
+
+                case 'action_item_edit':
+                    _edited(objResponse);
+                    break;
+            }
+        }
+
+
+        // _________________________________________________________________________________________ REST Event Handlers
+
+        function _receivedList(objResponse)
+        {
+            const objResponseData = objResponse.value;
+
+            // hide loader
+            App.Helpers.UI.toggleHorizontalLoader(_$grdActions, 'reset');
+
+            // success
+            if(objResponse.code === App.Request.ResponseCode.OK)
+            {
+                _renderGrid(objResponseData['data']);
+
+                return;
+            }
+
+            // error
+            if(objResponse.code === App.Request.ResponseCode.SERVER_ERROR)
+            {
+                // show error
+                App.Helpers.Error.showResponseErrors(objResponseData);
+            }
+        }
+
+
+        function _receivedItem(objResponse)
+        {
+            const objResponseData = objResponse.value;
+
+            // reset activated button
+            App.Helpers.UI.toggleButtonState(null, 'reset');
+
+            // success
+            if(objResponse.code === App.Request.ResponseCode.OK)
+            {
+                // show modal in edit mode
+                _showAddEditModel('edit');
+
+                // put data to add edit modal
+                _renderAddEditModalForEdit(objResponseData['data']);
+
+                return;
+            }
+
+            // error
+            if(objResponse.code === App.Request.ResponseCode.SERVER_ERROR)
+            {
+                // show error
+                App.Helpers.Error.showResponseErrors(objResponseData);
+            }
+        }
+
+
+        function _added(objResponse)
+        {
+            const objResponseData = objResponse.value;
+
+            // success
+            if(objResponse.code === App.Request.ResponseCode.CREATED)
+            {
+                // show success message
+                App.Components.Notification.success("<strong>Action added successfully</strong>");
+
+                // reset and hide modal
+                _resetAddEditModal('add');
+                _hideAddEditModel();
+
+                // reload action grid
+                App.Request.get('action_list', App.Settings.ApiEndpoints.ACTION_GET_LIST, {});
+
+                return;
+            }
+
+            // error
+            if($.inArray(objResponse.code, App.Request.ErrorResponses) !== -1)
+            {
+                // validation error
+                if(objResponse.code === App.Request.ResponseCode.UNPROCESSABLE)
+                {
+                    App.Validator.showServerValidationErrors(objResponseData);
+                }
+
+                // server error
+                if(objResponse.code === App.Request.ResponseCode.SERVER_ERROR)
+                {
+                    App.Helpers.Error.showResponseErrors(objResponseData);
+                }
+
+                // reset save button
+                App.Helpers.UI.toggleButtonState(_$btnSave, 'reset');
+            }
+        }
+
+
+        function _edited(objResponse)
+        {
+            const objResponseData = objResponse.value;
+
+            // success
+            if(objResponse.code === App.Request.ResponseCode.NO_CONTENT)
+            {
+                // show success message
+                App.Components.Notification.success("<strong>Action edited successfully</strong>");
+
+                // reset and hide modal
+                _resetAddEditModal('add');
+                _hideAddEditModel();
+
+                // reload action grid
+                App.Request.get('action_list', App.Settings.ApiEndpoints.ACTION_GET_LIST, {});
+
+                return;
+            }
+
+            // error
+            if($.inArray(objResponse.code, App.Request.ErrorResponses) !== -1)
+            {
+                // validation error
+                if(objResponse.code === App.Request.ResponseCode.UNPROCESSABLE)
+                {
+                    App.Validator.showServerValidationErrors(objResponseData);
+                }
+
+                // server error
+                if(objResponse.code === App.Request.ResponseCode.SERVER_ERROR)
+                {
+                    App.Helpers.Error.showResponseErrors(objResponseData);
+                }
+
+                // reset save button
+                App.Helpers.UI.toggleButtonState(_$btnSave, 'reset');
+            }
+        }
+
+
+        // ____________________________________________________________________________________________ UI Manipulations
+
+        function _showAddEditModel(strMode)
+        {
+            _resetAddEditModal(strMode);
+            _$mdlAddEdit.modal({keyboard: true, backdrop: false, show: true, focus: true});
+        }
+
+
+        function _hideAddEditModel()
+        {
+            _$mdlAddEdit.modal('hide');
+        }
+
+
+        function _resetAddEditModal(strType)
+        {
+            const _$mdlTitle = _$mdlAddEdit.find('.modal-title');
+
+            if(strType === 'add')
+            {
+                _$mdlTitle.html("ADD NEW");
+                _blnAdd = true;
+            }
+
+            if(strType === 'edit')
+            {
+                _$mdlTitle.html("EDIT");
+                _blnAdd = false;
+            }
+
+            // reset validator
+            App.Validator.reset(_objValidator);
+
+            _$hdnId.val("");
+            _$txtName.val("");
+            _$txtDesc.val("");
+            App.Helpers.UI.toggleButtonState(_$btnSave, 'reset');
+        }
+
+
+        function _renderBaseView()
+        {
+            if($.inArray(App.Settings.UserAction.ADD, _arrPermissions) === -1)
+            {
+                _$btnAdd.prop('disabled', true);
+            }
+
+            _renderGrid([]);
+        }
+
+
+        function _renderGrid(arrData)
+        {
+            const grdActionRows = _$grdActions.find('tbody');
+            const strNoData = '<tr><td colspan="3" class="text-muted td-text-center">NO DATA</td></tr>';
+            var strRows = "";
+
+            // check whether there is data
+            if(arrData.length === 0)
+            {
+                grdActionRows.html(strNoData);
+
+                return;
+            }
+
+            // create rows
+            $.each(arrData, function(intIndex, objRow)
+            {
+                // details
+                strRows += '<tr>' +
+                    '<td><strong>' + objRow.name + '</strong></td>' +
+                    '<td>' + objRow.description + '</td>' +
+                    '<td><div class="pull-right">';
+
+                // actions
+                if($.inArray(App.Settings.UserAction.EDIT, _arrPermissions) !== -1)
+                {
+                    strRows += '<button id="btnEdit_' + objRow.id + '" ' +
+                        'class="btn btn-sm pmd-btn-fab pmd-btn-flat pmd-ripple-effect btn-primary action-edit" ' +
+                        'type="button"' +
+                        'data-toggle="tooltip" data-placement="top" title="Edit" value="' + objRow.id + '">' +
+                        '<i class="fa fa-pencil fa-fw fa-lg"></i>' +
+                        '</button>';
+                }
+
+                strRows += '</div></td></tr>';
+            });
+
+            grdActionRows.html(strRows);
+
+            $('[data-toggle="tooltip"]').tooltip();
+        }
+
+
+        function _renderAddEditModalForEdit(objData)
+        {
+            // set values
+            _$hdnId.val(objData.id);
+            _$txtName.val(objData.name);
+            _$txtDesc.val(objData.description);
+        }
+
+
+        // _____________________________________________________________________________________________ Server Requests
+
+        function _getItem(objEditButton)
+        {
+            // disable edit button
+            App.Helpers.UI.toggleButtonState(objEditButton, 'loading');
+
+            // make the action item get request
+            const objData = {
+                id: objEditButton.val()
+            };
+
+            App.Request.get('action_item', App.Settings.ApiEndpoints.ACTION_GET_BY_ID, objData);
+        }
+
+
+        function _save()
+        {
+            // validate the form
+            _objValidator = App.Validator.validateForm(_$frmAddEdit, _objValidationRules);
+
+            // when invalid
+            if(!_$frmAddEdit.valid())
+            {
+                return;
+            }
+
+            // request data
+            const objData = {
+                name: _$txtName.val(),
+                description: _$txtDesc.val()
+            };
+
+            // disable save button
+            App.Helpers.UI.toggleButtonState(_$btnSave, 'loading');
+
+            if(_blnAdd)
+            {
+                // make the action item add request
+                App.Request.post('action_item_add', App.Settings.ApiEndpoints.ACTION_ADD, objData);
+            }
+            else
+            {
+                // send id with objData
+                objData.id = _$hdnId.val();
+
+                // make the action item edit request
+                App.Request.put('action_item_edit', App.Settings.ApiEndpoints.ACTION_EDIT, objData);
+            }
+
+        }
+
+
+        // ______________________________________________________________________________________________________ Public
+
+        function init(arrPermissions)
+        {
+            // set permissions
+            _arrPermissions = arrPermissions;
+
+            // render base view
+            _renderBaseView();
+
+            // NOTE: make sure you init tooltips and popover after rendering the view
+            // init tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+
+            // init popover
+            $('[data-toggle="popover"]').popover();
+
+            // show loader
+            App.Helpers.UI.toggleHorizontalLoader(_$grdActions, 'loading');
+
+            // make the get list request
+            App.Request.get('action_list', App.Settings.ApiEndpoints.ACTION_GET_LIST, {});
+        }
+
+
+        function destroy()
+        {
+            // stop listening to responseQueueUpdated event
+            App.Events.off('responseQueueUpdated', _delegateResponse);
+        }
+
+
+        return {
+            init: init,
+            destroy: destroy
+        };
+
+    })();
+
+</script>
