@@ -51,23 +51,22 @@ App.Settings = (function()
 
     // all api endpoints
     const ApiEndpoints = {
-        AUTH: ApiUrl + 'authenticate',
-        PERMISSION: ApiUrl + 'role_permission',
+        AUTH: ApiUrl + 'auth/login',
+        PERMISSION: ApiUrl + 'auth/permission',
 
         ACTION_GET_LIST: ApiUrl + 'action',
         ACTION_GET_BY_ID: ApiUrl + 'action/{id}',
         ACTION_ADD: ApiUrl + 'action',
-        ACTION_EDIT: ApiUrl + 'action/{id}',
+        ACTION_EDIT: ApiUrl + 'action/{id}'
     };
 
-    // all possible user actions. (NOTE: this object should reflect the 'action' table in the database)
+    // all possible user actions for the entire app
     const UserAction = {
         ADD: 'add',
         EDIT: 'edit',
         CHANGE_STATUS: 'change_status',
         CANCEL: 'cancel',
-        DISPATCH: 'dispatch',
-        ASSIGN_ACTION: 'assign_action'
+        DELETE: 'delete'
     };
 
     // all possible filter operators
@@ -98,7 +97,7 @@ App.Session = (function()
         var objSession = {
             timestamp: $.now(),
             token: objData.token,
-            user: jwt_decode(objData.token).user,
+            user: jwt_decode(objData.token).data.user,
             routs: objData.permissions,
             permitted: _setPermittedRouts(objData.permissions.routs)
         };
@@ -286,13 +285,22 @@ App.Request = (function()
 
     var _arrLatestRequest = [];
 
+    // request header
+    var _objRequestHeader = {
+        "Accept":"application/json"
+    };
+
 
     function _request(strKey, strMethod, strEndpoint, objData)
     {
         // check whether session is valid
-        if(!App.Session.isValid() && strEndpoint != App.Settings.ApiEndpoints.AUTH)
+        if(!App.Session.isValid()
+            && $.inArray(strEndpoint, _arrUnauthenticatedRouts) === -1
+        )
         {
             App.Modules.Login.logout();
+
+            return;
         }
 
         const intTimestamp = $.now();
@@ -317,15 +325,13 @@ App.Request = (function()
         // add token to request data
         if($.inArray(strEndpoint, _arrUnauthenticatedRouts) === -1)
         {
-            objData.token = App.Session.getToken();
+            _objRequestHeader.Authorization = 'Bearer ' + App.Session.getToken();
         }
 
         $.ajax({
             type: strMethod,
             url: strEndpoint,
-            headers: {
-                "Accept":"application/json"
-            },
+            headers: _objRequestHeader,
             data: objData,
             success: function(objResult, strStatus, objXHR)
             {
@@ -669,14 +675,14 @@ App.Helpers.Error = (function()
 {
     function showResponseErrors(objResponseData)
     {
-        var strMessage = objResponseData['errors'][0].message;
+        var strMessage = objResponseData['error'].message;
 
         if(strMessage == undefined || strMessage == "")
         {
             strMessage = "Unknown Exception" +
-                "<br>type " + objResponseData['errors'][0].type +
-                "<br>in " + objResponseData['errors'][0].file +
-                "<br>at line " + objResponseData['errors'][0].line;
+                "<br>code " + objResponseData['error'].code +
+                "<br>in " + objResponseData['error'].file +
+                "<br>at line " + objResponseData['error'].line;
         }
 
         App.Components.Notification.danger("<strong>" + strMessage + "</strong>");
@@ -757,8 +763,6 @@ App.Helpers.UI = (function()
         {
             var objLoader = objPlaceholder.prev();
 
-            console.log(objLoader);
-
             // remove loader of the element
             if(objLoader.prop('id') == "ldrHorizontal")
             {
@@ -813,8 +817,9 @@ App.Components.MainNav = (function()
 
     function init()
     {
-        const _objUser = App.Session.getUser();
-        _$lblUserName.html(_objUser.name)
+        const objUser = App.Session.getUser();
+
+        _$lblUserName.html(objUser.name)
     }
 
 
@@ -1063,7 +1068,7 @@ App.Modules.Login = (function()
                 _authenticate(objResponse);
                 break;
 
-            case 'login_authorize':
+            case 'login_permission':
                 _setAuthorizations(objResponse);
                 break;
         }
@@ -1135,16 +1140,25 @@ App.Modules.Login = (function()
             };
 
             // make the authorization request
-            App.Request.get('login_authorize', App.Settings.ApiEndpoints.PERMISSION, objData);
+            App.Request.get('login_permission', App.Settings.ApiEndpoints.PERMISSION, objData);
 
             return;
         }
 
         // error
-        if(intResponseStatus === App.Request.ResponseCode.SERVER_ERROR)
+        if($.inArray(objResponse.code, App.Request.ErrorResponses) !== -1)
         {
-            // show error
-            App.Helpers.Error.showResponseErrors(objResponseData);
+            // validation error
+            if(objResponse.code === App.Request.ResponseCode.UNPROCESSABLE)
+            {
+                App.Validator.showServerValidationErrors(objResponseData);
+            }
+
+            // server error
+            if(objResponse.code === App.Request.ResponseCode.SERVER_ERROR)
+            {
+                App.Helpers.Error.showResponseErrors(objResponseData);
+            }
 
             // enable login button
             _toggleButtonState(_$btnLogin, 'reset');
