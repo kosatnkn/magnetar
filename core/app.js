@@ -772,9 +772,24 @@ App.Helpers.UI = (function()
     }
 
 
+    function renderDropdownOptions(objKeyValMap, arrData)
+    {
+        var strOptions = "";
+
+        // create options
+        $.each(arrData, function(intIndex, objRow)
+        {
+            strOptions += '<option value="' + objRow[objKeyValMap.id] + '">' + objRow[objKeyValMap.name] + '</option>';
+        });
+
+        return strOptions;
+    }
+
+
     return {
         toggleButtonState: function(objButton, strState){ toggleButtonState(objButton, strState); },
-        toggleHorizontalLoader: function(objPlaceholder, strState){ toggleHorizontalLoader(objPlaceholder, strState); }
+        toggleHorizontalLoader: function(objPlaceholder, strState){ toggleHorizontalLoader(objPlaceholder, strState); },
+        renderDropdownOptions: function(objKeyValMap, arrData){ return renderDropdownOptions(objKeyValMap, arrData); }
     };
 
 })();
