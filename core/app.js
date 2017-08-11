@@ -291,7 +291,7 @@ App.Request = (function()
     };
 
 
-    function _request(strKey, strMethod, strEndpoint, objData)
+    function _request(strKey, strMethod, strEndpoint, objData, arrFiles, objProgress)
     {
         // check whether session is valid
         if(!App.Session.isValid()
@@ -328,11 +328,13 @@ App.Request = (function()
             _objRequestHeader.Authorization = 'Bearer ' + App.Session.getToken();
         }
 
-        $.ajax({
+        // create request object
+        var objRequest = {
             type: strMethod,
             url: strEndpoint,
-            headers: _objRequestHeader,
-            data: objData,
+            headers: {
+                "Accept":"application/json"
+            },
             success: function(objResult, strStatus, objXHR)
             {
                 _updateResponseQueue(strKey, objXHR.status, intTimestamp, objResult);
@@ -341,7 +343,81 @@ App.Request = (function()
             {
                 _updateResponseQueue(strKey, objXHR.status , intTimestamp, objXHR.responseJSON);
             }
-        });
+        };
+
+        // modify request object and data object if there are files to be uploaded
+        if(!(arrFiles === undefined || arrFiles === null))
+        {
+            // modify data object
+            var objFormData = new FormData();
+
+            // when there is only one file
+            if(arrFiles.length === 1)
+            {
+                // add file to data object
+                objFormData.append("file", arrFiles[0]);
+            }
+
+            // when there are more than one file
+            if(arrFiles.length > 1)
+            {
+                for (var i = 0; i < arrFiles.length; i++)
+                {
+                    // add file to data object
+                    objFormData.append("file_" + (i + 1), arrFiles[i]);
+                }
+            }
+
+            // add rest of the data as a string under the 'data' key
+            objFormData.append("data", JSON.stringify(objData));
+
+            // reassign form data object to data object
+            objData = objFormData;
+
+
+            // modify request object
+            objRequest.processData = false;
+            objRequest.contentType = false;
+        }
+
+        // show progress
+        if(!(objProgress === undefined || objProgress === null))
+        {
+            // get progress bar from the progress control
+            const objBar = objProgress.find('.progress-bar');
+
+            objRequest.xhr = function()
+            {
+                var objXHR = $.ajaxSettings.xhr();
+
+                if(objXHR.upload)
+                {
+                    objXHR.upload.addEventListener('progress', function(event)
+                    {
+                        var intPercent = 0;
+                        var intPosition = event.loaded || event.position;
+                        var intTotal = event.total;
+
+                        if(event.lengthComputable)
+                        {
+                            intPercent = Math.ceil(intPosition / intTotal * 100);
+                        }
+
+                        //update progress
+                        objBar.css("width", intPercent + "%");
+
+                    }, true);
+                }
+
+                return objXHR;
+            }
+        }
+
+        // add data to request
+        objRequest.data = objData;
+
+        // make the request
+        $.ajax(objRequest);
     }
 
 
@@ -386,19 +462,19 @@ App.Request = (function()
 
     function get(strKey, strEndpoint, objData)
     {
-        _request(strKey, 'GET', strEndpoint, objData);
+        _request(strKey, 'GET', strEndpoint, objData, null);
     }
 
 
-    function post(strKey, strEndpoint, objData)
+    function post(strKey, strEndpoint, objData, arrFiles, objProgress)
     {
-        _request(strKey, 'POST', strEndpoint, objData);
+        _request(strKey, 'POST', strEndpoint, objData, arrFiles, objProgress);
     }
 
 
-    function put(strKey, strEndpoint, objData)
+    function put(strKey, strEndpoint, objData , arrFiles, objProgress)
     {
-        _request(strKey, 'PUT', strEndpoint, objData);
+        _request(strKey, 'PUT', strEndpoint, objData, arrFiles, objProgress);
     }
 
 
@@ -424,8 +500,8 @@ App.Request = (function()
     // public methods and properties
     return {
         get: function(strKey, strEndpoint, objData){ get(strKey, strEndpoint, objData); },
-        post: function(strKey, strEndpoint, objData){ post(strKey, strEndpoint, objData); },
-        put: function(strKey, strEndpoint, objData){ put(strKey, strEndpoint, objData); },
+        post: function(strKey, strEndpoint, objData, arrFiles, objProgress){ post(strKey, strEndpoint, objData, arrFiles, objProgress); },
+        put: function(strKey, strEndpoint, objData, arrFiles, objProgress){ put(strKey, strEndpoint, objData, arrFiles, objProgress); },
         del: function(strKey, strEndpoint, objData){ del(strKey, strEndpoint, objData); },
         getResponseFor: function(strKey){ return getResponseFor(strKey); },
         ResponseCode: ResponseCode,
@@ -613,6 +689,10 @@ App.Validator = (function()
             {
                 error.insertAfter(element.parent());
             }
+            else if(element.prop('type') === 'text' && element.parent().hasClass('input-group'))
+            {
+                error.insertAfter(element.parent());
+            }
             else
             {
                 error.insertAfter(element);
@@ -745,8 +825,13 @@ App.Helpers.UI = (function()
                 return;
             }
 
+            if(! objButton.prop('disabled'))
+            {
+                return;
+            }
+
             objButton.prop('disabled', false);
-            objButton.html("Save");
+            objButton.html(_strCurrentButtonCaption);
         }
     }
 
@@ -776,6 +861,13 @@ App.Helpers.UI = (function()
     {
         var strOptions = "";
 
+        // when arrData is empty
+        if(arrData.length === 0)
+        {
+            strOptions = '<option value="" class="text-center text-muted">NO DATA</option>';
+            return strOptions;
+        }
+
         // create options
         $.each(arrData, function(intIndex, objRow)
         {
@@ -786,9 +878,25 @@ App.Helpers.UI = (function()
     }
 
 
+    function renderFileSelectorCaption(objFileSelector)
+    {
+        const objContainer = objFileSelector.closest('div');
+        const lblCaption = objContainer.find('span');
+
+        if(objFileSelector.val() == "")
+        {
+            lblCaption.html(lblCaption.data('default'));
+            return;
+        }
+
+        lblCaption.html(objFileSelector.val().split('\\').pop());
+    }
+
+
     return {
         toggleButtonState: function(objButton, strState){ toggleButtonState(objButton, strState); },
         toggleHorizontalLoader: function(objPlaceholder, strState){ toggleHorizontalLoader(objPlaceholder, strState); },
+        renderFileSelectorCaption: function(objFileSelector){ renderFileSelectorCaption(objFileSelector); },
         renderDropdownOptions: function(objKeyValMap, arrData){ return renderDropdownOptions(objKeyValMap, arrData); }
     };
 
@@ -1095,13 +1203,13 @@ App.Modules.Login = (function()
         if(strState === 'loading')
         {
             objButton.prop('disabled', true);
-            objButton.html("<i class='fa fa-circle-o-notch fa-spin'></i> Loggin in");
+            App.Helpers.UI.toggleButtonState(objButton, 'loading');
         }
 
         if(strState === 'reset')
         {
             objButton.prop('disabled', false);
-            objButton.html("Login");
+            App.Helpers.UI.toggleButtonState(objButton, 'reset');
         }
     }
 
@@ -1245,6 +1353,8 @@ App.Modules.Login = (function()
     {
         // reset app
         App.reset();
+
+        location.reload();
     }
 
 
