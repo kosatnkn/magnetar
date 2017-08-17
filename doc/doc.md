@@ -1,4 +1,16 @@
-# Magnetar
+# Magnetar Documentation
+
+### Table of Content
+
+1. [Introduction](#introduction)
+2. [Folder Structure](#folder-structure)
+3. [Libraries](#libraries)
+4. [Core](#core)
+5. [Index File](#index-file)
+6. [Modules](#modules)
+
+
+## Introduction
 
 Magnetar is aimed at being a web client that can communicate to a web api.
 
@@ -19,12 +31,33 @@ Magnetar provides following fundamentals that you need to kickstart your SPA pro
  - Router to load and unload modules and to navigate around
  - Validator to validate forms
  - Additional Helper functions
- - Header, Sidenav and Login module already in place
+ - Header, Side Navigation and Login module already in place
 
 Enjoy!
 
-### Documentation
-You can find a complete documentation [here](doc/doc.md).
 
-### Disclaimer
-Use at your own risk
+## Folder Structure
+
+    magnetar
+        |- core
+        |    |- app.js
+        |- doc
+        |    |- doc.md
+        |- lib
+        |    |- css
+        |        |- (required css files)
+        |    |- fonts
+        |        |- (required web fonts)
+        |    |- js
+        |        |- jquery
+        |        |- jwt
+        |        |- notify
+        |        |- validator
+        |        |- (other js libraries you need)   
+        |- modules
+        |    |- (modules that you create)
+        |
+        |- .gitignore
+        |- favicon.ico
+        |- index.html
+        |- README.md
