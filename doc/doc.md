@@ -7,16 +7,16 @@
 - [Libraries](#libraries)
 - [Index File](#index-file)
 - [Core](#core)
-    - [App.Components](#app-components)
-    - [App.Events](#app-events)
-    - [App.Helpers](#app-helpers)
-    - [App.Modules](#app-modules)
-    - [App.Request](#app-request)
-    - [App.Router](#app-router)
-    - [App.Session](#app-session)
-    - [App.Settings](#app-settings)
-    - [App.Validator](#app-validator)
-    - [App.Modules](#app-modules)
+    - [App.Components](#components)
+    - [App.Events](#events)
+    - [App.Helpers](#helpers)
+    - [App.Modules](#modules)
+    - [App.Request](#request)
+    - [App.Router](#router)
+    - [App.Session](#session)
+    - [App.Settings](#settings)
+    - [App.Validator](#validator)
+    - [App.Modules](#modules)
 - [Creating Modules](#creating-modules)
 
 
@@ -135,22 +135,22 @@ entire structure of the application running at that time.
 Following are the main objects of `Magnetar`
 
 
-#### App.Components
+#### Components
 
 `App.Components` contain Main Navigation, Side Navigation and Notification.
 
 
-#### App.Events
+#### Events
 
 `App.Events` is the custom event Pub/Sub of `Magnetar`.
 
 
-#### App.Helpers
+#### Helpers
 
 There are several helper methods in `App.Helpers` to do common UI manipulations and error handling.
 
 
-#### App.Modules
+#### Modules
 
 `App.Modules` contain all operation logic of loaded modules. To achieve this you have to structure actual modules according
 to the format specified in the [Creating Modules](#creating-modules) section.
@@ -162,7 +162,7 @@ to the format specified in the [Creating Modules](#creating-modules) section.
 > operational logic of loaded modules (.html files that resides in the `modules` folder)
 
 
-#### App.Request
+#### Request
 
 `App.Request` is responsible for talking with the server asynchronously using Ajax. It supports RESTful requests and
 even multiple file uploads.
@@ -184,7 +184,7 @@ Only `POST` and `PUT` requests are capable of uploading files. In addition to th
 to this method and it will update the progress bar as the upload happens.
 
 
-#### App.Router
+#### Router
 
 `Router` handles navigation between modules. Under the hood it utilizes the `hashchange` method of `jQuery`.
 Because of that you can use browsers Back and Next buttons to navigate around.
@@ -195,13 +195,13 @@ Because of that you can use browsers Back and Next buttons to navigate around.
 > ex: if module name is `module_name` the route that loads that model should be `#module_name`.
 
 
-#### App.Session
+#### Session
 
 `Session` manages a user session in browser's local storage. You can configure the active duration of the session
 in `Settings`.
 
 
-#### App.Settings
+#### Settings
 
 `Settings` contain all configurable aspects of the application.
 
@@ -228,7 +228,7 @@ App.Request.get('action_get_list', App.Settings.ApiEndpoints.ACTION_GET_LIST);
 ```
 
 
-#### App.Validator
+#### AValidator
 
 `Validator` is a wrapper around the jQuery validator library for front end validations as well as a common interface to 
 render validation errors thrown by the API.
