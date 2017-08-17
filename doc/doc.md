@@ -2,12 +2,21 @@
 
 ### Table of Content
 
-1. [Introduction](#introduction)
-2. [Folder Structure](#folder-structure)
-3. [Libraries](#libraries)
-4. [Index File](#index-file)
-5. [Core](#core)
-6. [Modules](#modules)
+- [Introduction](#introduction)
+- [Folder Structure](#folder-structure)
+- [Libraries](#libraries)
+- [Index File](#index-file)
+- [Core](#core)
+    - [Components](#components)
+    - [Events](#events)
+    - [Helpers](#helpers)
+    - [Modules](#modules)
+    - [Request](#request)
+    - [Router](#router)
+    - [Session](#session)
+    - [Settings](#settings)
+    - [Validator](#validator)
+- [Modules](#modules)
 
 
 ## Introduction
@@ -68,7 +77,7 @@ Enjoy!
 ## Libraries
 
 The `lib` folder contains all the CSS files, Fonts and JavaScript libraries that you would use with `Magnetar`.
-Of these following libraries are essential for `Magnetar` to work.
+Of these, following libraries are essential for `Magnetar` to work.
 
 - [jQuery](https://github.com/jquery/jquery)
 - [JWT Decoder](https://github.com/auth0/jwt-decode)
@@ -114,7 +123,69 @@ This will initialize the application and run it.
 ## Core
 
 The core of `Magnetar` is at `core/app.js`.
+At run time the entire application is encapsulated in an object named `App`.
 
+`Magnetar` is written using the modular JavaScript programming approach.
+Each aspects of the application is in its own object under the main `App` object.
+
+If you typed `App` in the console of the browser and press `ENTER` when the application is running you can view the
+entire structure of the application running at that time.
+
+Following are the main objects of `Magnetar`
+
+
+#### Components
+
+`Components` contain Main Navigation, Side Navigation and Notification.
+
+
+#### Events
+
+`Events` is the custom event Pub/Sub of `Magnetar`.
+
+
+#### Helpers
+
+There are several helper methods in `Helpers` to do common UI manipulations and error handling.
+
+
+#### Modules
+
+`Modules` contain all the modules loaded at run time
+
+> A module is a part of operational logic coupled with its own UI. In much simpler terms modules are sub pages loaded
+> inside the main page to perform a specific task.
+
+
+#### Request
+
+`Request` is responsible for talking with the server asynchronously using Ajax. It supports RESTful requests and
+even multiple file uploads.
+
+```javascript
+    App.Request.get(strKey, strEndpoint, objData); // GET request
+    App.Request.post(strKey, strEndpoint, objData, arrFiles, objProgress); // POST request
+    App.Request.put(strKey, strEndpoint, objData, arrFiles, objProgress); // PUT request
+    App.Request.del(strKey, strEndpoint, objData); // DELETE request
+```
+
+`strKey` is a unique `string` value that you have to specify with every request you make to the server.
+This is used by the `Request` objects `ResponseQueue` management algorithm to handle responses.
+
+Only `POST` and `PUT` requests are capable of uploading files. In addition to that you can pass a `Progress Bar Object`
+to this method and it will update the progress bar as the upload happens.
+
+
+#### Router
+
+
+#### Session
+
+
+#### Settings
+
+
+#### Validator
 
 
 
