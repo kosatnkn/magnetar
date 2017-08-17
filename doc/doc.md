@@ -7,16 +7,17 @@
 - [Libraries](#libraries)
 - [Index File](#index-file)
 - [Core](#core)
-    - [Components](#components)
-    - [Events](#events)
-    - [Helpers](#helpers)
-    - [Modules](#modules)
-    - [Request](#request)
-    - [Router](#router)
-    - [Session](#session)
-    - [Settings](#settings)
-    - [Validator](#validator)
-- [Modules](#modules)
+    - [App.Components](#app.components)
+    - [App.Events](#app.events)
+    - [App.Helpers](#app.helpers)
+    - [App.Modules](#app.modules)
+    - [App.Request](#app.request)
+    - [App.Router](#app.router)
+    - [App.Session](#app.session)
+    - [App.Settings](#app.settings)
+    - [App.Validator](#app.validator)
+    - [App.Modules](#app.modules)
+- [Creating Modules](#creating-modules)
 
 
 ## Introduction
@@ -134,32 +135,36 @@ entire structure of the application running at that time.
 Following are the main objects of `Magnetar`
 
 
-#### Components
+#### App.Components
 
-`Components` contain Main Navigation, Side Navigation and Notification.
-
-
-#### Events
-
-`Events` is the custom event Pub/Sub of `Magnetar`.
+`App.Components` contain Main Navigation, Side Navigation and Notification.
 
 
-#### Helpers
+#### App.Events
 
-There are several helper methods in `Helpers` to do common UI manipulations and error handling.
+`App.Events` is the custom event Pub/Sub of `Magnetar`.
 
 
-#### Modules
+#### App.Helpers
 
-`Modules` contain all the modules loaded at run time
+There are several helper methods in `App.Helpers` to do common UI manipulations and error handling.
+
+
+#### App.Modules
+
+`App.Modules` contain all operation logic of loaded modules. To achieve this you have to structure actual modules according
+to the format specified in the [Creating Modules](#creating-modules) section.
 
 > A module is a part of operational logic coupled with its own UI. In much simpler terms modules are sub pages loaded
 > inside the main page to perform a specific task.
 
+> Now don't get confused. What's meant by `Modules` here is `App.Modules`, the object that `Magnetar` uses to keep
+> operational logic of loaded modules (.html files that resides in the `modules` folder)
 
-#### Request
 
-`Request` is responsible for talking with the server asynchronously using Ajax. It supports RESTful requests and
+#### App.Request
+
+`App.Request` is responsible for talking with the server asynchronously using Ajax. It supports RESTful requests and
 even multiple file uploads.
 
 ```javascript
@@ -172,21 +177,63 @@ even multiple file uploads.
 `strKey` is a unique `string` value that you have to specify with every request you make to the server.
 This is used by the `Request` objects `ResponseQueue` management algorithm to handle responses.
 
-Only `POST` and `PUT` requests are capable of uploading files. In addition to that you can pass a `Progress Bar Object`
+> When you do multiple requests to the same endpoint the `Request` module will adjust the `ResponseQueue` only to accept
+> the response of the latest request.
+
+Only `POST` and `PUT` requests are capable of uploading files. In addition to that you can pass a `Progress Bar` object
 to this method and it will update the progress bar as the upload happens.
 
 
-#### Router
+#### App.Router
+
+`Router` handles navigation between modules. Under the hood it utilizes the `hashchange` method of `jQuery`.
+Because of that you can use browsers Back and Next buttons to navigate around.
+
+> The route name should be as same as the name of the module file.
+> As a convention use lowercase letters and underscores for naming both module files and routes.
+> 
+> ex: if module name is `module_name` the route that loads that model should be `#module_name`.
 
 
-#### Session
+#### App.Session
+
+`Session` manages a user session in browser's local storage. You can configure the active duration of the session
+in `Settings`.
 
 
-#### Settings
+#### App.Settings
+
+`Settings` contain all configurable aspects of the application.
+
+- `AppName` A unique name for the app
+- `SessionTimeout` Session timeout in hours
+- `ApiUrl` Base url of the backend API
+- `ApiEndpoints` All API endpoints that the client can call is in here as a set of key value pairs.
+
+> When you use an endpoint in a request call make sure that you use the endpoint key to refer to the endpoint url.
+
+```javascript
+// in App.Settings
+
+const ApiUrl = 'http://api_url/';
+
+const ApiEndpoints = {
+    ACTION_GET_LIST: ApiUrl + 'endpoint'
+};
 
 
-#### Validator
+// in a module
+
+App.Request.get('action_get_list', App.Settings.ApiEndpoints.ACTION_GET_LIST);
+```
 
 
+#### App.Validator
 
-## Modules
+`Validator` is a wrapper around the jQuery validator library for front end validations as well as a common interface to 
+render validation errors thrown by the API.
+
+
+### Creating Modules
+
+All modules of
