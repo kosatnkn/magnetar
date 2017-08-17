@@ -6,7 +6,7 @@
 - [Folder Structure](#folder-structure)
 - [Libraries](#libraries)
 - [Index File](#index-file)
-- [Core](#core)
+- [Core (App)](#core)
     - [App.Components](#components)
     - [App.Events](#events)
     - [App.Helpers](#helpers)
@@ -228,7 +228,7 @@ App.Request.get('action_get_list', App.Settings.ApiEndpoints.ACTION_GET_LIST);
 ```
 
 
-#### AValidator
+#### Validator
 
 `Validator` is a wrapper around the jQuery validator library for front end validations as well as a common interface to 
 render validation errors thrown by the API.
@@ -236,4 +236,87 @@ render validation errors thrown by the API.
 
 ### Creating Modules
 
-All modules of
+A module is the combination of UI and it's driving logic attached together.
+
+All modules of `Magnetar` resides in the `modules` directory. You **CANNOT** have sub directories in here.
+So you have to name these module files in a logical manner of your choosing.
+
+When you name module files use only lowercase letters and underscores. The name of the module file is the route that
+`Router` uses to load it when it is called through its route. The extension of the file should be `.html`
+
+The layout of the module file should be as follows
+
+```xhtml
+<div class="container" id="divAction">
+
+    <!-- 
+        UI is defined here.
+        Make sure that you name components properly and avoid using inline styling
+        and don't write JavaScript snippets within html.
+        And also don't import .css files or .js files in to the module.
+        All your imports has to be done in `index.html`
+    -->
+    
+</div>
+
+
+<script>
+
+    App.Modules.Action = (function()
+    {
+        // ...
+        // Module specific logic 
+        // ...
+        
+        
+        function init()
+        {
+            // ...
+            // functions to run when module initializes
+            // ...
+
+            // NOTE: Make sure you init tooltips and popover after rendering the view.
+            //       You sort of has to do this. Otherwise tooltips and popovers will not wok within the loaded module.
+            // init tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+
+            // init popover
+            $('[data-toggle="popover"]').popover();
+        }
+
+
+        function destroy()
+        {
+            // stop listening to responseQueueUpdated event
+            App.Events.off('responseQueueUpdated', _delegateResponse);
+        }
+
+
+        return {
+            init: init,
+            destroy: destroy
+        };
+        
+    })();
+    
+
+</script>
+```
+
+The `init()` and `destroy()` methods must be in the module.
+As soon as a module is loaded `Router` executes its `init()` method and
+it executes the modules `destroy()` method just before it unloads the module.
+
+The naming convention of the module object is also important.
+Module class name should be the `Pascal Case` version of the file name without underscores.
+And it should be namespaced as `App.Modules`
+
+> ex: `App.Modules.ModuleName`
+
+Following table shows how routs, files and module class should be named for different modules.
+
+Route | Module File | Module Class
+--- | --- | ---
+`#action` | `action.html` | `App.Modules.Action`
+`#another_action` | `another_action.html` | `App.Modules.AnotherAction`
+`#much_complex_action` | `much_complex_action.html` | `App.Modules.MuchComplexAction`
