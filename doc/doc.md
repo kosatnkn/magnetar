@@ -18,6 +18,7 @@
     - [App.Validator](#validator)
     - [App.Modules](#modules)
 - [Creating Modules](#creating-modules)
+- [How to Combine Everything Together](#how-to-combine-everything-together)
 
 
 ## Introduction
@@ -259,7 +260,6 @@ The layout of the module file should be as follows
     
 </div>
 
-
 <script>
 
     App.Modules.Action = (function()
@@ -276,7 +276,8 @@ The layout of the module file should be as follows
             // ...
 
             // NOTE: Make sure you init tooltips and popover after rendering the view.
-            //       You sort of has to do this. Otherwise tooltips and popovers will not wok within the loaded module.
+            //       You sort of has to do this. Otherwise tooltips and popovers will not 
+            //       work within the loaded module.
             // init tooltips
             $('[data-toggle="tooltip"]').tooltip();
 
@@ -320,3 +321,10 @@ Route | Module File | Module Class
 `#action` | `action.html` | `App.Modules.Action`
 `#another_action` | `another_action.html` | `App.Modules.AnotherAction`
 `#much_complex_action` | `much_complex_action.html` | `App.Modules.MuchComplexAction`
+
+
+### How to Combine Everything Together
+
+So how to combine all these together and write a module?
+
+Find a walkthrough of creating a `module` [here](walkthrough.md)
