@@ -19,7 +19,7 @@ Magnetar provides following fundamentals that you need to kickstart your SPA pro
  - Router to load and unload modules and to navigate around
  - Validator to validate forms
  - Additional Helper functions
- - Header, Sidenav and Login module already in place
+ - Header, Side Navigation and Login module already in place
 
 Enjoy!
 
@@ -27,4 +27,4 @@ Enjoy!
 You can find a complete documentation [here](doc/doc.md).
 
 ### Disclaimer
-Use at your own risk
+Guys and Girls! This is to be used at your own risk.

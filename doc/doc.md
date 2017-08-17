@@ -5,8 +5,8 @@
 1. [Introduction](#introduction)
 2. [Folder Structure](#folder-structure)
 3. [Libraries](#libraries)
-4. [Core](#core)
-5. [Index File](#index-file)
+4. [Index File](#index-file)
+5. [Core](#core)
 6. [Modules](#modules)
 
 
@@ -39,25 +39,83 @@ Enjoy!
 ## Folder Structure
 
     magnetar
-        |- core
+        |- core/
         |    |- app.js
-        |- doc
+        |- doc/ (documentation)
         |    |- doc.md
-        |- lib
-        |    |- css
-        |        |- (required css files)
-        |    |- fonts
+        |- lib/ (libraries)
+        |    |- css/
+        |        |- bootsetap.css
+        |        |- (other required css files)
+        |    |- fonts/
         |        |- (required web fonts)
-        |    |- js
-        |        |- jquery
-        |        |- jwt
-        |        |- notify
-        |        |- validator
+        |    |- js/
+        |        |- bootstrap/
+        |        |- jquery/
+        |        |- jwt/
+        |        |- notify/
+        |        |- validator/
         |        |- (other js libraries you need)   
-        |- modules
+        |- modules/
         |    |- (modules that you create)
         |
         |- .gitignore
         |- favicon.ico
-        |- index.html
+        |- index.html (main entry point of application)
         |- README.md
+
+
+## Libraries
+
+The `lib` folder contains all the CSS files, Fonts and JavaScript libraries that you would use with `Magnetar`.
+Of these following libraries are essential for `Magnetar` to work.
+
+- [jQuery](https://github.com/jquery/jquery)
+- [JWT Decoder](https://github.com/auth0/jwt-decode)
+- [Bootstrap Notify](https://github.com/mouse0270/bootstrap-notify)
+- [jQuery Validator](https://github.com/jquery-validation/jquery-validation)
+
+By default `Magnetar` uses Bootstrap Bootstrap-Yeti and Propeller as its css frameworks. But you can easily change these
+to any other bootstrap based frameworks. It is also possible to change it in to some entirely different css framework.
+However to do so you would have to tinker the core of `Magnetar` a little.
+
+- [Bootstrap](https://github.com/twbs/bootstrap)
+- [Propeller](https://github.com/digicorp/propeller)
+- [Animate CSS](https://github.com/daneden/animate.css)
+- [Font Awesome](https://github.com/FortAwesome/Font-Awesome)
+
+
+## Index File
+
+`index.html` is the main page that is loaded. Everything else is loaded in to this page.
+
+> You should load all .css and .js files here and only here. 
+> After loading all that you should load the `core/app.js` file at the very end of the file.  
+
+You can define the base template of your `SPA (Single Page Application)` here.
+
+At the very end of the file you need to put a `<script>` block and add the following code segment.
+This will initialize the application and run it.
+
+```xhtml
+<script>
+
+    $(document).ready(function()
+    {
+        // start the app
+        App.run();
+
+    });
+
+</script>
+```
+
+
+## Core
+
+The core of `Magnetar` is at `core/app.js`.
+
+
+
+
+## Modules
