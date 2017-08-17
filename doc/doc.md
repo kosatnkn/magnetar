@@ -228,6 +228,12 @@ const ApiEndpoints = {
 App.Request.get('action_get_list', App.Settings.ApiEndpoints.ACTION_GET_LIST);
 ```
 
+You can also have placeholders in routs.
+
+```javascript
+    http://api_url/action/{id}
+```
+
 
 #### Validator
 
@@ -305,7 +311,7 @@ The layout of the module file should be as follows
 ```
 
 The `init()` and `destroy()` methods must be in the module.
-As soon as a module is loaded `Router` executes its `init()` method and
+As soon as a module is loaded `App.Router` executes its `init()` method and
 it executes the modules `destroy()` method just before it unloads the module.
 
 The naming convention of the module object is also important.
