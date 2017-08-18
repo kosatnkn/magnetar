@@ -30,3 +30,10 @@ You can find a complete documentation [here](doc/doc.md).
 
 ### Disclaimer
 Guys and Girls! This is to be used at your own risk.
+
+
+<hr>
+
+Coded by `Kosala Tennakoon` of `Sri Lanka`
+
+Many thanks to `Sandun Fernando` for the Logo
