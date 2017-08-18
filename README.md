@@ -31,9 +31,13 @@ You can find a complete documentation [here](doc/doc.md).
 ### Disclaimer
 Guys and Girls! This is to be used at your own risk.
 
-
+<br>
+<br>
 <hr>
 
-Coded by `Kosala Tennakoon` of `Sri Lanka`
+<p style="text-align:center">:sunny:</p>
+<p style="text-align:center">Coded by `Kosala Tennakoon` of `Sri Lanka`</p>
+<p style="text-align:center">Many thanks to `Sandun Fernando` for the logo</p>
 
-Many thanks to `Sandun Fernando` for the Logo
+
+
