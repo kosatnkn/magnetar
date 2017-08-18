@@ -35,7 +35,7 @@ Guys and Girls! This is to be used at your own risk.
 <br>
 <hr>
 
-:sunny:
+:sunny: :herb: :snowflake: :cherry_blossom:
 
 Coded by `Kosala Tennakoon` of `Sri Lanka`
 
