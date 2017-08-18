@@ -35,9 +35,11 @@ Guys and Girls! This is to be used at your own risk.
 <br>
 <hr>
 
-<p style="text-align:center">:sunny:</p>
-<p style="text-align:center">Coded by `Kosala Tennakoon` of `Sri Lanka`</p>
-<p style="text-align:center">Many thanks to `Sandun Fernando` for the logo</p>
+:sunny:
+
+Coded by `Kosala Tennakoon` of `Sri Lanka`
+
+Many thanks to `Sandun Fernando` for the logo
 
 
 
