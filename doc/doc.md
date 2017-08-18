@@ -1,4 +1,4 @@
-<div align="center"><img src ="doc/magnetar_logo.png"/></div>
+<div align="center"><img src ="magnetar_logo.png"/></div>
 
 # Magnetar Documentation
 
