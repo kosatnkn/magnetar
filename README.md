@@ -1,5 +1,7 @@
 # Magnetar
 
+![Magnetar](doc/magnetar_logo.png)
+
 Magnetar is aimed at being a web client that can communicate to a web api.
 
 The idea behind this project is to come up with a JavaScript framework that can be used out of the box for development.
