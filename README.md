@@ -1,8 +1,6 @@
 # Magnetar
 
-![Magnetar](doc/magnetar_logo1.png "Magnetar Logo")
-
-<div align="center"><img src ="doc/magnetar_logo1.png"/></div>
+<div align="center"><img src ="doc/magnetar_logo.png"/></div>
 
 Magnetar is aimed at being a web client that can communicate to a web api.
 

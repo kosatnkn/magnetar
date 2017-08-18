@@ -1,3 +1,5 @@
+<div align="center"><img src ="doc/magnetar_logo.png"/></div>
+
 # Magnetar Documentation
 
 ### Table of Content

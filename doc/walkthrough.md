@@ -1,3 +1,5 @@
+<div align="center"><img src ="doc/magnetar_logo.png"/></div>
+
 # Create a Module
 
 To understand the architecture of a module open a sample module in the `modules` directory.
