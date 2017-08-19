@@ -182,7 +182,7 @@ even multiple file uploads.
 `strKey` is a unique `string` value that you have to specify with every request you make to the server.
 This is used by the `Request` objects `ResponseQueue` management algorithm to handle responses.
 
-> When you do multiple requests to the same endpoint the `Request` module will adjust the `ResponseQueue` only to accept
+> When you do multiple requests using the same key the `Request` module will adjust the `ResponseQueue` only to accept
 > the response of the latest request.
 
 Only `POST` and `PUT` requests are capable of uploading files. In addition to that you can pass a `Progress Bar` object
@@ -191,7 +191,7 @@ to this method and it will update the progress bar as the upload happens.
 
 #### Router
 
-`Router` handles navigation between modules. Under the hood it utilizes the `hashchange` method of `jQuery`.
+`App.Router` handles navigation between modules. Under the hood it utilizes the `hashchange` method of `jQuery`.
 Because of that you can use browsers Back and Next buttons to navigate around.
 
 > The route name should be as same as the name of the module file.
@@ -202,13 +202,13 @@ Because of that you can use browsers Back and Next buttons to navigate around.
 
 #### Session
 
-`Session` manages a user session in browser's local storage. You can configure the active duration of the session
+`App.Session` manages a user session in browser's local storage. You can configure the active duration of the session
 in `Settings`.
 
 
 #### Settings
 
-`Settings` contain all configurable aspects of the application.
+`App.Settings` contain all configurable aspects of the application.
 
 - `AppName` A unique name for the app
 - `SessionTimeout` Session timeout in hours
@@ -229,7 +229,7 @@ const ApiEndpoints = {
 
 // in a module
 
-App.Request.get('action_get_list', App.Settings.ApiEndpoints.ACTION_GET_LIST);
+App.Request.get('action_get_list', App.Settings.ApiEndpoints.ACTION_GET_LIST, {});
 ```
 
 You can also have placeholders in routs.
