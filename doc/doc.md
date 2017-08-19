@@ -56,6 +56,8 @@ Enjoy!
         |    |- app.js
         |- doc/ (documentation)
         |    |- doc.md
+        |    |- walkthrough.md
+        |    |- magnetar_logo.png
         |- lib/ (libraries)
         |    |- css/
         |        |- bootsetap.css
@@ -232,7 +234,7 @@ App.Request.get('action_get_list', App.Settings.ApiEndpoints.ACTION_GET_LIST);
 
 You can also have placeholders in routs.
 
-```javascript
+```
     http://api_url/action/{id}
 ```
 
