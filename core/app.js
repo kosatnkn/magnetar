@@ -400,6 +400,9 @@ App.Request = (function()
             timestamp: intTimestamp
         };
 
+        // add token to request header
+        _addTokenToAuthRoute(strEndpoint);
+
         // replace placeholders of endpoint string with data values
         $.each(objData, function(strPlaceholder, strValue)
         {
@@ -412,19 +415,11 @@ App.Request = (function()
             }
         });
 
-        // add token to request data
-        if($.inArray(strEndpoint, _arrUnauthenticatedRouts) === -1)
-        {
-            _objRequestHeader.Authorization = 'Bearer ' + App.Session.getToken();
-        }
-
         // create request object
         var objRequest = {
             type: strMethod,
             url: strEndpoint,
-            headers: {
-                "Accept":"application/json"
-            },
+            headers: _objRequestHeader,
             success: function(objResult, strStatus, objXHR)
             {
                 _updateResponseQueue(strKey, objXHR.status, intTimestamp, objResult);
@@ -508,6 +503,25 @@ App.Request = (function()
 
         // make the request
         $.ajax(objRequest);
+    }
+
+
+    /**
+     * Add authentication token to authenticatable route.
+     *
+     * @param strEndpoint
+     * @private
+     */
+    function _addTokenToAuthRoute(strEndpoint)
+    {
+        if($.inArray(strEndpoint, _arrUnauthenticatedRouts) === -1)
+        {
+            _objRequestHeader.Authorization = 'Bearer ' + App.Session.getToken();
+
+            return;
+        }
+
+        delete _objRequestHeader['Authorization'];
     }
 
 
@@ -623,14 +637,12 @@ App.Request = (function()
      */
     function getResponseFor(strKey)
     {
-        var objResponse = null;
-
         if(typeof ResponseQueue[strKey] != 'undefined')
         {
-            objResponse = ResponseQueue[strKey];
+            return ResponseQueue[strKey];
         }
 
-        return objResponse;
+        return null;
     }
 
 
@@ -1070,7 +1082,7 @@ App.Helpers.UI = (function()
     /**
      * Generate an options list to a dropdown using a key value array.
      *
-     * @param objKeyValMap
+     * @param objKeyValMap {id: <array_field_to_map_to_value_property>, name: <array_field_to_display_in_dropdown>}
      * @param arrData
      * @returns {string}
      */
@@ -1474,27 +1486,11 @@ App.Modules.Login = (function()
     }
 
 
-    function _toggleButtonState(objButton, strState)
-    {
-        if(strState === 'loading')
-        {
-            objButton.prop('disabled', true);
-            App.Helpers.UI.toggleButtonState(objButton, 'loading');
-        }
-
-        if(strState === 'reset')
-        {
-            objButton.prop('disabled', false);
-            App.Helpers.UI.toggleButtonState(objButton, 'reset');
-        }
-    }
-
-
     function _reset()
     {
         _$txtEmail.val('');
         _$txtPassword.val('');
-        _toggleButtonState(_$btnLogin, 'reset');
+        App.Helpers.UI.toggleButtonState(_$btnLogin, 'reset');
     }
 
 
@@ -1516,7 +1512,7 @@ App.Modules.Login = (function()
         };
 
         // disable login button
-        _toggleButtonState(_$btnLogin, 'loading');
+        App.Helpers.UI.toggleButtonState(_$btnLogin, 'loading');
 
         // make the authentication request
         App.Request.post('login_auth', App.Settings.ApiEndpoints.AUTH, objData);
@@ -1560,7 +1556,7 @@ App.Modules.Login = (function()
             }
 
             // enable login button
-            _toggleButtonState(_$btnLogin, 'reset');
+            App.Helpers.UI.toggleButtonState(_$btnLogin, 'reset');
         }
     }
 
