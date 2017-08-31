@@ -3,15 +3,27 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width">
-        <title>QUnit Example</title>
+        <title>Magnetar Test</title>
         <link rel="stylesheet" href="lib/qunit-2.4.0.css">
     </head>
     <body>
         <div id="qunit"></div>
         <div id="qunit-fixture"></div>
+
+
+        <!-- jQuery first, then Bootstrap JS. -->
+        <script src="../lib/js/jquery/jquery-3.1.1.min.js"></script>
+        <script src="../lib/js/jwt/jwt-decode.min.js"></script>
+        <script src="../lib/js/bootstrap/bootstrap.min.js"></script>
+        <script src="../lib/js/propeller/propeller.min.js"></script>
+        <script src="../lib/js/notify/bootstrap-notify.min.js"></script>
+        <script src="../lib/js/validator/jquery.validate.min.js"></script>
+        <script src="../lib/js/validator/additional-methods.js"></script>
+
         <script src="lib/qunit-2.4.0.js"></script>
 
+        <script src="../core/app.js"></script>
         <script src="tests/app_test.js"></script>
 
     </body>
-</html>
+</html>`
