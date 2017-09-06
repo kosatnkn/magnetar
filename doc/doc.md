@@ -25,24 +25,24 @@
 
 ## Introduction
 
-Magnetar is aimed at being a web client that can communicate to a web api.
+`Magnetar` is aimed at being a web client that can communicate with a RESTful web api.
 
 The idea behind this project is to come up with a JavaScript framework that can be used out of the box for development.
-Even without the need to set up a specialized environment using a javascript tool set.
+Even without the need to set up a specialized environment using a JavaScript tool set.
 
 Just the plain old JavaScript goodness!
 
 The project will only give you the bare fundamentals. Nothing more than that. So you can decide on what and what not to add.
 In most cases the framework will not interfere with your choices.
 
-Magnetar provides following fundamentals that you need to kickstart your SPA project.
+Magnetar provides following fundamentals that you would need to kickstart your SPA project.
 
  - JWT support
  - Session support
- - PubSub to handle user defined events
- - Request to deal with communicating with the server (And yes! it can upload files)
- - Router to load and unload modules and to navigate around
- - Validator to validate forms
+ - A PubSub to handle user defined events
+ - A Request class to deal with communicating with the server (And yes! it can upload files)
+ - A Router to load and unload modules and to navigate around
+ - A Validator to validate forms
  - Additional Helper functions
  - Header, Side Navigation and Login module already in place
 
@@ -56,6 +56,8 @@ Enjoy!
         |    |- app.js
         |- doc/ (documentation)
         |    |- doc.md
+        |    |- walkthrough.md
+        |    |- magnetar_logo.png
         |- lib/ (libraries)
         |    |- css/
         |        |- bootsetap.css
@@ -180,7 +182,7 @@ even multiple file uploads.
 `strKey` is a unique `string` value that you have to specify with every request you make to the server.
 This is used by the `Request` objects `ResponseQueue` management algorithm to handle responses.
 
-> When you do multiple requests to the same endpoint the `Request` module will adjust the `ResponseQueue` only to accept
+> When you do multiple requests using the same key the `Request` module will adjust the `ResponseQueue` only to accept
 > the response of the latest request.
 
 Only `POST` and `PUT` requests are capable of uploading files. In addition to that you can pass a `Progress Bar` object
@@ -189,7 +191,7 @@ to this method and it will update the progress bar as the upload happens.
 
 #### Router
 
-`Router` handles navigation between modules. Under the hood it utilizes the `hashchange` method of `jQuery`.
+`App.Router` handles navigation between modules. Under the hood it utilizes the `hashchange` method of `jQuery`.
 Because of that you can use browsers Back and Next buttons to navigate around.
 
 > The route name should be as same as the name of the module file.
@@ -200,13 +202,13 @@ Because of that you can use browsers Back and Next buttons to navigate around.
 
 #### Session
 
-`Session` manages a user session in browser's local storage. You can configure the active duration of the session
+`App.Session` manages a user session in browser's local storage. You can configure the active duration of the session
 in `Settings`.
 
 
 #### Settings
 
-`Settings` contain all configurable aspects of the application.
+`App.Settings` contain all configurable aspects of the application.
 
 - `AppName` A unique name for the app
 - `SessionTimeout` Session timeout in hours
@@ -227,12 +229,12 @@ const ApiEndpoints = {
 
 // in a module
 
-App.Request.get('action_get_list', App.Settings.ApiEndpoints.ACTION_GET_LIST);
+App.Request.get('action_get_list', App.Settings.ApiEndpoints.ACTION_GET_LIST, {});
 ```
 
 You can also have placeholders in routs.
 
-```javascript
+```
     http://api_url/action/{id}
 ```
 

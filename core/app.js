@@ -11,6 +11,10 @@
 
 const App = (function()
 {
+    /**
+     * Run application.
+     *  (NOTE: This is the main entry point to the app)
+     */
     function run()
     {
         // check local storage for a session
@@ -20,11 +24,16 @@ const App = (function()
             return;
         }
 
-        // when session valid, set app status using given url
+        App.Components.SideNav.init();
+        App.Components.MainNav.show();
+
+        // when session valid, set app status using the urls hash part
         App.Router.init();
     }
 
-
+    /**
+     * Reset the application to it's default state.
+     */
     function reset()
     {
         App.Session.destroy();
@@ -85,7 +94,6 @@ App.Settings = (function()
     return {
         AppName: AppName,
         SessionTimeout: SessionTimeout,
-        ApiUrl: ApiUrl,
         UserAction: UserAction,
         FilterOperator: FilterOperator,
         ApiEndpoints: ApiEndpoints
@@ -99,6 +107,11 @@ App.Settings = (function()
 
 App.Session = (function()
 {
+    /**
+     * Initialize the session.
+     *
+     * @param objData
+     */
     function init(objData)
     {
         var objSession = {
@@ -113,6 +126,13 @@ App.Session = (function()
     }
 
 
+    /**
+     * Compile a list of permitted routs using permissions.
+     *
+     * @param objPermissions
+     * @returns {{}}
+     * @private
+     */
     function _setPermittedRouts(objPermissions)
     {
         var objPermittedRoutes = {};
@@ -129,6 +149,11 @@ App.Session = (function()
     }
 
 
+    /**
+     * Check whether the session is valid.
+     *
+     * @returns {boolean}
+     */
     function isValid()
     {
         var objSession = localStorage.getItem(App.Settings.AppName);
@@ -149,36 +174,64 @@ App.Session = (function()
     }
 
 
+    /**
+     * Get authentication token.
+     *
+     * @returns {string|*}
+     */
     function getToken()
     {
         return JSON.parse(localStorage.getItem(App.Settings.AppName)).token;
     }
 
 
+    /**
+     * Get the user object.
+     *
+     * @returns {*}
+     */
     function getUser()
     {
         return JSON.parse(localStorage.getItem(App.Settings.AppName)).user;
     }
 
 
+    /**
+     * Get the list of routs and their associated permissions.
+     *
+     * @returns {permissions|{}|*}
+     */
     function getRouts()
     {
         return JSON.parse(localStorage.getItem(App.Settings.AppName)).routs;
     }
 
 
+    /**
+     * Get the list of permitted routs.
+     *
+     * @returns {{}|*}
+     */
     function getPermittedRouts()
     {
         return JSON.parse(localStorage.getItem(App.Settings.AppName)).permitted;
     }
 
 
+    /**
+     * Get the default route.
+     *
+     * @returns {string}
+     */
     function getDefaultRoute()
     {
         return '#' + getRouts().default;
     }
 
 
+    /**
+     * Destroy the session.
+     */
     function destroy()
     {
         localStorage.removeItem(App.Settings.AppName);
@@ -207,6 +260,12 @@ App.Events = (function()
     var events = {};
 
 
+    /**
+     * Subscribe for an event.
+     *
+     * @param eventName
+     * @param fn
+     */
     function on(eventName, fn)
     {
         events[eventName] = events[eventName] || [];
@@ -214,6 +273,12 @@ App.Events = (function()
     }
 
 
+    /**
+     * Unsubscribe from an event.
+     *
+     * @param eventName
+     * @param fn
+     */
     function off(eventName, fn)
     {
         if(events[eventName])
@@ -233,6 +298,12 @@ App.Events = (function()
     }
 
 
+    /**
+     * Trigger an event.
+     *
+     * @param eventName
+     * @param data
+     */
     function emit(eventName, data)
     {
         if(events[eventName])
@@ -249,8 +320,7 @@ App.Events = (function()
     return {
         on: function(eventName, fn) { on(eventName, fn); },
         off: function(eventName, fn) { off(eventName, fn); },
-        emit: function(eventName, data) { emit(eventName, data); },
-        events: events
+        emit: function(eventName, data) { emit(eventName, data); }
     };
 
 })();
@@ -298,6 +368,17 @@ App.Request = (function()
     };
 
 
+    /**
+     * Make the request.
+     *
+     * @param strKey
+     * @param strMethod
+     * @param strEndpoint
+     * @param objData
+     * @param arrFiles
+     * @param objProgress
+     * @private
+     */
     function _request(strKey, strMethod, strEndpoint, objData, arrFiles, objProgress)
     {
         // check whether session is valid
@@ -317,6 +398,9 @@ App.Request = (function()
             timestamp: intTimestamp
         };
 
+        // add token to request header
+        _addTokenToAuthRoute(strEndpoint);
+
         // replace placeholders of endpoint string with data values
         $.each(objData, function(strPlaceholder, strValue)
         {
@@ -329,19 +413,11 @@ App.Request = (function()
             }
         });
 
-        // add token to request data
-        if($.inArray(strEndpoint, _arrUnauthenticatedRouts) === -1)
-        {
-            _objRequestHeader.Authorization = 'Bearer ' + App.Session.getToken();
-        }
-
         // create request object
         var objRequest = {
             type: strMethod,
             url: strEndpoint,
-            headers: {
-                "Accept":"application/json"
-            },
+            headers: _objRequestHeader,
             success: function(objResult, strStatus, objXHR)
             {
                 _updateResponseQueue(strKey, objXHR.status, intTimestamp, objResult);
@@ -428,6 +504,34 @@ App.Request = (function()
     }
 
 
+    /**
+     * Add authentication token to authenticatable route.
+     *
+     * @param strEndpoint
+     * @private
+     */
+    function _addTokenToAuthRoute(strEndpoint)
+    {
+        if($.inArray(strEndpoint, _arrUnauthenticatedRouts) === -1)
+        {
+            _objRequestHeader.Authorization = 'Bearer ' + App.Session.getToken();
+
+            return;
+        }
+
+        delete _objRequestHeader['Authorization'];
+    }
+
+
+    /**
+     * Update the response queue.
+     *
+     * @param strKey
+     * @param intResponseCode
+     * @param intTimestamp
+     * @param objValue
+     * @private
+     */
     function _updateResponseQueue(strKey, intResponseCode, intTimestamp, objValue)
     {
         // check whether the response is of latest request
@@ -467,40 +571,76 @@ App.Request = (function()
     }
 
 
+    /**
+     * Make a 'GET' request.
+     *
+     * @param strKey
+     * @param strEndpoint
+     * @param objData
+     */
     function get(strKey, strEndpoint, objData)
     {
         _request(strKey, 'GET', strEndpoint, objData, null);
     }
 
 
+    /**
+     * Make a 'POST' request.
+     *
+     * @param strKey
+     * @param strEndpoint
+     * @param objData
+     * @param arrFiles
+     * @param objProgress
+     */
     function post(strKey, strEndpoint, objData, arrFiles, objProgress)
     {
         _request(strKey, 'POST', strEndpoint, objData, arrFiles, objProgress);
     }
 
 
+    /**
+     * Make a 'PUT' request.
+     *
+     * @param strKey
+     * @param strEndpoint
+     * @param objData
+     * @param arrFiles
+     * @param objProgress
+     */
     function put(strKey, strEndpoint, objData , arrFiles, objProgress)
     {
         _request(strKey, 'PUT', strEndpoint, objData, arrFiles, objProgress);
     }
 
 
+    /**
+     * Make a 'DELETE' request.
+     *
+     * @param strKey
+     * @param strEndpoint
+     * @param objData
+     */
     function del(strKey, strEndpoint, objData)
     {
         _request(strKey, 'DELETE', strEndpoint, objData);
     }
 
 
+    /**
+     * Get response data returned by a request using the key used to make that request.
+     *
+     * @param strKey
+     * @returns {*}
+     */
     function getResponseFor(strKey)
     {
-        var objResponse = null;
-
         if(typeof ResponseQueue[strKey] != 'undefined')
         {
-            objResponse = ResponseQueue[strKey];
+            return ResponseQueue[strKey];
         }
 
-        return objResponse;
+        return null;
     }
 
 
@@ -542,6 +682,13 @@ App.Router = (function()
     $(window).on('hashchange', function(event){ _loadModule(location.hash); });
 
 
+    /**
+     * Load a module using a location hash.
+     *
+     * @param strLocationHash
+     *
+     * @private
+     */
     function _loadModule(strLocationHash)
     {
         // unload the current module
@@ -594,6 +741,11 @@ App.Router = (function()
     }
 
 
+    /**
+     * Unload the currently loaded module.
+     *
+     * @private
+     */
     function _unloadCurrentModule()
     {
         // get module name
@@ -607,6 +759,13 @@ App.Router = (function()
     }
 
 
+    /**
+     * Generate the module class name using the location hash.
+     *
+     * @param strLocationHash
+     * @returns {string}
+     * @private
+     */
     function _getModuleName(strLocationHash)
     {
         var strModuleName = strLocationHash.substring(1, strLocationHash.length);
@@ -622,6 +781,13 @@ App.Router = (function()
     }
 
 
+    /**
+     * Generate the path to module file in the server using the location hash.
+     *
+     * @param strLocationHash
+     * @returns {string}
+     * @private
+     */
     function _getModulePath(strLocationHash)
     {
         var strModuleName = strLocationHash.substring(1, strLocationHash.length);
@@ -630,6 +796,13 @@ App.Router = (function()
     }
 
 
+    /**
+     * Get user permissions assigned to a specific module using the location hash.
+     *
+     * @param strLocationHash
+     * @returns {*}
+     * @private
+     */
     function _getPermissions(strLocationHash)
     {
         const objPermittedRouts = App.Session.getPermittedRouts();
@@ -644,15 +817,18 @@ App.Router = (function()
     }
 
 
+    /**
+     * Initialize the router.
+     */
     function init()
     {
-        App.Components.SideNav.init();
-        App.Components.MainNav.show();
-
         _loadModule(location.hash);
     }
 
 
+    /**
+     * Reset the router.
+     */
     function reset()
     {
         location.hash = '';
@@ -660,6 +836,9 @@ App.Router = (function()
     }
 
 
+    /**
+     * Load the default module.
+     */
     function loadDefault()
     {
         location.hash = App.Session.getDefaultRoute();
@@ -708,12 +887,24 @@ App.Validator = (function()
     });
 
 
+    /**
+     * Validate a given jQuery form object using a validation rules object.
+     *
+     * @param objForm
+     * @param objRules
+     * @returns {*}
+     */
     function validateForm(objForm, objRules)
     {
         return objForm.validate(objRules);
     }
 
 
+    /**
+     * Reset the validator.
+     *
+     * @param objValidator
+     */
     function reset(objValidator)
     {
         if(objValidator !== null)
@@ -723,6 +914,11 @@ App.Validator = (function()
     }
 
 
+    /**
+     * Show validation errors thrown from the API using the global notification interface.
+     *
+     * @param objResponseData
+     */
     function showServerValidationErrors(objResponseData)
     {
         // validation errors
@@ -760,6 +956,11 @@ App.Helpers = {
 
 App.Helpers.Error = (function()
 {
+    /**
+     * Show server errors thrown from the API using the global notification interface.
+     *
+     * @param objResponseData
+     */
     function showResponseErrors(objResponseData)
     {
         var strMessage = objResponseData['error'].message;
@@ -791,6 +992,12 @@ App.Helpers.UI = (function()
     var _strCurrentButtonCaption = '';
 
 
+    /**
+     * Toggle button state between loading and normal.
+     *
+     * @param objButton
+     * @param strState
+     */
     function toggleButtonState(objButton, strState)
     {
         if(strState === 'loading')
@@ -843,6 +1050,12 @@ App.Helpers.UI = (function()
     }
 
 
+    /**
+     * Add or remove a horizontal loading indicator to a UI element.
+     *
+     * @param objPlaceholder
+     * @param strState
+     */
     function toggleHorizontalLoader(objPlaceholder, strState)
     {
         if(strState === 'loading')
@@ -864,6 +1077,13 @@ App.Helpers.UI = (function()
     }
 
 
+    /**
+     * Generate an options list to a dropdown using a key value array.
+     *
+     * @param objKeyValMap {id: <array_field_to_map_to_value_property>, name: <array_field_to_display_in_dropdown>}
+     * @param arrData
+     * @returns {string}
+     */
     function renderDropdownOptions(objKeyValMap, arrData)
     {
         var strOptions = "";
@@ -885,6 +1105,11 @@ App.Helpers.UI = (function()
     }
 
 
+    /**
+     * Show the file name of the currently loaded file of a UI file selector.
+     *
+     * @param objFileSelector
+     */
     function renderFileSelectorCaption(objFileSelector)
     {
         const objContainer = objFileSelector.closest('div');
@@ -945,6 +1170,9 @@ App.Components.MainNav = (function()
     _$lnkLogout.on('click', function(){ App.Modules.Login.logout(); });
 
 
+    /**
+     * Initialize the main navigator.
+     */
     function init()
     {
         const objUser = App.Session.getUser();
@@ -953,6 +1181,9 @@ App.Components.MainNav = (function()
     }
 
 
+    /**
+     * Show the main navigator.
+     */
     function show()
     {
         init();
@@ -960,6 +1191,9 @@ App.Components.MainNav = (function()
     }
 
 
+    /**
+     * Hide the main navigator.
+     */
     function hide()
     {
         _$navMain.addClass('invisible');
@@ -992,12 +1226,21 @@ App.Components.SideNav = (function()
     });
 
 
+    /**
+     * Initialize the side navigator.
+     */
     function init()
     {
         _$divSideNav.html(_generateContent());
     }
 
 
+    /**
+     * Generate the menu list for the side navigator.
+     *
+     * @returns {string}
+     * @private
+     */
     function _generateContent()
     {
         const objRouts = App.Session.getRouts();
@@ -1034,6 +1277,9 @@ App.Components.SideNav = (function()
     }
 
 
+    /**
+     * Toggle visibility of the side navigator.
+     */
     function toggle()
     {
         if(_$divSideNav.width() == 0)
@@ -1047,12 +1293,18 @@ App.Components.SideNav = (function()
     }
 
 
+    /**
+     * Show the side navigator.
+     */
     function show()
     {
         _$divSideNav.width(250);
     }
 
 
+    /**
+     * Hide the side navigator.
+     */
     function hide()
     {
         _$divSideNav.removeClass("pmd-sidebar-open");
@@ -1074,6 +1326,13 @@ App.Components.SideNav = (function()
 
 App.Components.Notification = (function()
 {
+    /**
+     * Show a notification message.
+     *
+     * @param strMessage
+     * @param objOptions
+     * @private
+     */
     function _notify(strMessage, objOptions)
     {
         var objOptionDefaults = {
@@ -1093,6 +1352,11 @@ App.Components.Notification = (function()
     }
 
 
+    /**
+     * Show a success message.
+     *
+     * @param strMessage
+     */
     function success(strMessage)
     {
         const objOptions = {
@@ -1103,6 +1367,11 @@ App.Components.Notification = (function()
     }
 
 
+    /**
+     * Show an information message.
+     *
+     * @param strMessage
+     */
     function info(strMessage)
     {
         const objOptions = {
@@ -1113,6 +1382,11 @@ App.Components.Notification = (function()
     }
 
 
+    /**
+     * Show a warning message.
+     *
+     * @param strMessage
+     */
     function warning(strMessage)
     {
         const objOptions = {
@@ -1123,6 +1397,11 @@ App.Components.Notification = (function()
     }
 
 
+    /**
+     * show a danger message.
+     *
+     * @param strMessage
+     */
     function danger(strMessage)
     {
         const objOptions = {
@@ -1205,27 +1484,11 @@ App.Modules.Login = (function()
     }
 
 
-    function _toggleButtonState(objButton, strState)
-    {
-        if(strState === 'loading')
-        {
-            objButton.prop('disabled', true);
-            App.Helpers.UI.toggleButtonState(objButton, 'loading');
-        }
-
-        if(strState === 'reset')
-        {
-            objButton.prop('disabled', false);
-            App.Helpers.UI.toggleButtonState(objButton, 'reset');
-        }
-    }
-
-
     function _reset()
     {
         _$txtEmail.val('');
         _$txtPassword.val('');
-        _toggleButtonState(_$btnLogin, 'reset');
+        App.Helpers.UI.toggleButtonState(_$btnLogin, 'reset');
     }
 
 
@@ -1247,7 +1510,7 @@ App.Modules.Login = (function()
         };
 
         // disable login button
-        _toggleButtonState(_$btnLogin, 'loading');
+        App.Helpers.UI.toggleButtonState(_$btnLogin, 'loading');
 
         // make the authentication request
         App.Request.post('login_auth', App.Settings.ApiEndpoints.AUTH, objData);
@@ -1291,7 +1554,7 @@ App.Modules.Login = (function()
             }
 
             // enable login button
-            _toggleButtonState(_$btnLogin, 'reset');
+            App.Helpers.UI.toggleButtonState(_$btnLogin, 'reset');
         }
     }
 

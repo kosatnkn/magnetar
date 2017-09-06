@@ -25,12 +25,12 @@ Route | Module File | Module Class
 
 A module has two main parts.
 
-- UI Interface (only use html and css classes)
+- User Interface (only use html and css classes)
 - JavaScript Object (driver logic for the module enclosed in a namespaced object)
 
 
-### UI Interface
-The UI interface part is in a `div` element with an id. This entire element is cached when
+### User Interface (UI)
+The UI part is in a `div` element with an id. This entire element is cached when
 the module loads.
 
 ```xhtml
@@ -112,7 +112,7 @@ the module loads.
 - Prefix UI element `names` and `ids` with element type. (ex: divMain, txtName, drpSelect)
 - Prefix variable names with data type. (ex: strName, intValue, arrList)
 - Prefix `private` variable and method names with an underscore. (ex: _arrPermission, _delegateResponse())
-- Prefix jQuery representations of objects with a `$`. (ex: _$btnAdd)
+- Prefix jQuery representations of HTML elements with a `$`. (ex: _$btnAdd)
 
 
 ### Declarations
@@ -326,7 +326,7 @@ You can upload multiple files with `POST` and `PUT` requests.
     // selected files from a `file` input element
     const arrFiles = _$fleUpload.prop('files');
 
-    // make the setting item add request
+    // make the request
     App.Request.post('upload_files', 
                         App.Settings.ApiEndpoints.UPLOAD_FILES, 
                         objData, 
