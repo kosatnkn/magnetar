@@ -54,7 +54,6 @@ const App = (function()
 
 // ____________________________________________________________________________________________________________ Settings
 
-
 App.Settings = (function()
 {
     // app name
@@ -103,7 +102,6 @@ App.Settings = (function()
 
 
 // ______________________________________________________________________________________________________ Session Object
-
 
 App.Session = (function()
 {
@@ -254,7 +252,6 @@ App.Session = (function()
 
 // _______________________________________________________________________________________________________ Events PubSub
 
-
 App.Events = (function()
 {
     var events = {};
@@ -327,7 +324,6 @@ App.Events = (function()
 
 
 // ______________________________________________________________________________________________________ Request Object
-
 
 App.Request = (function()
 {
@@ -661,7 +657,6 @@ App.Request = (function()
 
 // _______________________________________________________________________________________________________ Router Object
 
-
 App.Router = (function()
 {
     // get container
@@ -856,7 +851,6 @@ App.Router = (function()
 
 // ____________________________________________________________________________________________________ Validator Object
 
-
 App.Validator = (function()
 {
     $.validator.setDefaults({
@@ -984,159 +978,7 @@ App.Helpers.Error = (function()
 })();
 
 
-App.Helpers.UI = (function()
-{
-    const _strSpinner = '<i class="fa fa-circle-o-notch fa-spin fa-fw fa-lg"></i> ';
-    const _strHorizontalLoader = '<div id="ldrHorizontal" class="loader-horizontal"></div>';
-    var _objCurrentButton = null;
-    var _strCurrentButtonCaption = '';
-
-
-    /**
-     * Toggle button state between loading and normal.
-     *
-     * @param objButton
-     * @param strState
-     */
-    function toggleButtonState(objButton, strState)
-    {
-        if(strState === 'loading')
-        {
-            // reset the last button
-            if(_objCurrentButton !== null)
-            {
-                _objCurrentButton.prop('disabled', false);
-                _objCurrentButton.html(_strCurrentButtonCaption);
-            }
-
-            // remember the current button
-            _objCurrentButton = objButton;
-            _strCurrentButtonCaption = objButton.html();
-
-            objButton.prop('disabled', true);
-
-            // check whether the button caption is an icon only
-            if(objButton.html().match("^<i") && objButton.html().match("i>$"))
-            {
-                objButton.html(_strSpinner);
-            }
-            else
-            {
-                objButton.html(_strSpinner + objButton.html());
-            }
-
-
-            return;
-        }
-
-        if(strState === 'reset')
-        {
-            if(objButton === null && _objCurrentButton !== null)
-            {
-                _objCurrentButton.prop('disabled', false);
-                _objCurrentButton.html(_strCurrentButtonCaption);
-
-                return;
-            }
-
-            if(! objButton.prop('disabled'))
-            {
-                return;
-            }
-
-            objButton.prop('disabled', false);
-            objButton.html(_strCurrentButtonCaption);
-        }
-    }
-
-
-    /**
-     * Add or remove a horizontal loading indicator to a UI element.
-     *
-     * @param objPlaceholder
-     * @param strState
-     */
-    function toggleHorizontalLoader(objPlaceholder, strState)
-    {
-        if(strState === 'loading')
-        {
-            // add loader before element
-            objPlaceholder.before(_strHorizontalLoader);
-        }
-
-        if(strState === 'reset')
-        {
-            var objLoader = objPlaceholder.prev();
-
-            // remove loader of the element
-            if(objLoader.prop('id') == "ldrHorizontal")
-            {
-                objLoader.remove();
-            }
-        }
-    }
-
-
-    /**
-     * Generate an options list to a dropdown using a key value array.
-     *
-     * @param objKeyValMap {id: <array_field_to_map_to_value_property>, name: <array_field_to_display_in_dropdown>}
-     * @param arrData
-     * @returns {string}
-     */
-    function renderDropdownOptions(objKeyValMap, arrData)
-    {
-        var strOptions = "";
-
-        // when arrData is empty
-        if(arrData.length === 0)
-        {
-            strOptions = '<option value="" class="text-center text-muted">NO DATA</option>';
-            return strOptions;
-        }
-
-        // create options
-        $.each(arrData, function(intIndex, objRow)
-        {
-            strOptions += '<option value="' + objRow[objKeyValMap.id] + '">' + objRow[objKeyValMap.name] + '</option>';
-        });
-
-        return strOptions;
-    }
-
-
-    /**
-     * Show the file name of the currently loaded file of a UI file selector.
-     *
-     * @param objFileSelector
-     */
-    function renderFileSelectorCaption(objFileSelector)
-    {
-        const objContainer = objFileSelector.closest('div');
-        const lblCaption = objContainer.find('span');
-
-        if(objFileSelector.val() == "")
-        {
-            lblCaption.html(lblCaption.data('default'));
-            return;
-        }
-
-        lblCaption.html(objFileSelector.val().split('\\').pop());
-    }
-
-
-    return {
-        toggleButtonState: function(objButton, strState){ toggleButtonState(objButton, strState); },
-        toggleHorizontalLoader: function(objPlaceholder, strState){ toggleHorizontalLoader(objPlaceholder, strState); },
-        renderFileSelectorCaption: function(objFileSelector){ renderFileSelectorCaption(objFileSelector); },
-        renderDropdownOptions: function(objKeyValMap, arrData){ return renderDropdownOptions(objKeyValMap, arrData); }
-    };
-
-})();
-
-
 // ______________________________________________________________________________________________________ Modules Object
-
 
 // container to hold all modules
 App.Modules = {
@@ -1146,7 +988,6 @@ App.Modules = {
 
 // ___________________________________________________________________________________________________ Components Object
 
-
 // container to hold all components
 App.Components = {
 
@@ -1154,7 +995,6 @@ App.Components = {
 
 
 // ___________________________________________________________________________________________ Main Navigation Component
-
 
 App.Components.MainNav = (function()
 {
@@ -1210,7 +1050,6 @@ App.Components.MainNav = (function()
 
 
 // ___________________________________________________________________________________________ Side Navigation Component
-
 
 App.Components.SideNav = (function()
 {
@@ -1323,7 +1162,6 @@ App.Components.SideNav = (function()
 
 // _______________________________________________________________________________________ Global Notification Component
 
-
 App.Components.Notification = (function()
 {
     /**
@@ -1422,8 +1260,190 @@ App.Components.Notification = (function()
 })();
 
 
-// ________________________________________________________________________________________________________ Login Module
+// ____________________________________________________________________________________________________ Button Component
 
+App.Components.Button = (function()
+{
+    const _strSpinner = '<i class="fa fa-circle-o-notch fa-spin fa-fw fa-lg"></i> ';
+
+    var _objCurrentButton = null;
+    var _strCurrentButtonCaption = '';
+
+    /**
+     * Toggle button state between loading and normal.
+     *
+     * @param objButton
+     * @param strState
+     */
+    function toggleState(objButton, strState)
+    {
+        if(strState === 'loading')
+        {
+            // reset the last button
+            if(_objCurrentButton !== null)
+            {
+                _objCurrentButton.prop('disabled', false);
+                _objCurrentButton.html(_strCurrentButtonCaption);
+            }
+
+            // remember the current button
+            _objCurrentButton = objButton;
+            _strCurrentButtonCaption = objButton.html();
+
+            objButton.prop('disabled', true);
+
+            // check whether the button caption is an icon only
+            if(objButton.html().match("^<i") && objButton.html().match("i>$"))
+            {
+                objButton.html(_strSpinner);
+            }
+            else
+            {
+                objButton.html(_strSpinner + objButton.html());
+            }
+
+
+            return;
+        }
+
+        if(strState === 'reset')
+        {
+            if(objButton === null && _objCurrentButton !== null)
+            {
+                _objCurrentButton.prop('disabled', false);
+                _objCurrentButton.html(_strCurrentButtonCaption);
+
+                return;
+            }
+
+            if(! objButton.prop('disabled'))
+            {
+                return;
+            }
+
+            objButton.prop('disabled', false);
+            objButton.html(_strCurrentButtonCaption);
+        }
+    }
+
+
+    return {
+        toggleState: function(objButton, strState){ toggleState(objButton, strState); }
+    };
+
+})();
+
+
+// __________________________________________________________________________________________________ Dropdown Component
+
+App.Components.Dropdown = (function()
+{
+    /**
+     * Generate an options list to a dropdown using a key value array.
+     *
+     * @param objKeyValMap {id: <array_field_to_map_to_value_property>, name: <array_field_to_display_in_dropdown>}
+     * @param arrData
+     * @returns {string}
+     */
+    function renderOptions(objKeyValMap, arrData)
+    {
+        var strOptions = "";
+
+        // when arrData is empty
+        if(arrData.length === 0)
+        {
+            strOptions = '<option value="" class="text-center text-muted">NO DATA</option>';
+            return strOptions;
+        }
+
+        // create options
+        $.each(arrData, function(intIndex, objRow)
+        {
+            strOptions += '<option value="' + objRow[objKeyValMap.id] + '">' + objRow[objKeyValMap.name] + '</option>';
+        });
+
+        return strOptions;
+    }
+
+
+    return {
+        renderOptions: function(objKeyValMap, arrData){ return renderOptions(objKeyValMap, arrData); }
+    };
+})();
+
+
+// _____________________________________________________________________________________________ File Selector Component
+
+App.Components.FileSelector = (function()
+{
+    /**
+     * Show the file name of the currently loaded file of a UI file selector.
+     *
+     * @param objFileSelector
+     */
+    function renderCaption(objFileSelector)
+    {
+        const objContainer = objFileSelector.closest('div');
+        const lblCaption = objContainer.find('span');
+
+        if(objFileSelector.val() == "")
+        {
+            lblCaption.html(lblCaption.data('default'));
+            return;
+        }
+
+        lblCaption.html(objFileSelector.val().split('\\').pop());
+    }
+
+
+    return {
+        renderCaption: function(objFileSelector){ renderCaption(objFileSelector); }
+    };
+
+})();
+
+
+// _________________________________________________________________________________________ Horizontal Loader Component
+
+App.Components.HorizontalLoader = (function()
+{
+    const _strHorizontalLoader = '<div id="ldrHorizontal" class="loader-horizontal"></div>';
+
+    /**
+     * Add or remove a horizontal loading indicator to a UI element.
+     *
+     * @param objPlaceholder
+     * @param strState
+     */
+    function toggleState(objPlaceholder, strState)
+    {
+        if(strState === 'loading')
+        {
+            // add loader before element
+            objPlaceholder.before(_strHorizontalLoader);
+        }
+
+        if(strState === 'reset')
+        {
+            var objLoader = objPlaceholder.prev();
+
+            // remove loader of the element
+            if(objLoader.prop('id') == "ldrHorizontal")
+            {
+                objLoader.remove();
+            }
+        }
+    }
+
+
+    return {
+        toggleState: function(objPlaceholder, strState){ toggleState(objPlaceholder, strState); }
+    };
+
+})();
+
+
+// ________________________________________________________________________________________________________ Login Module
 
 App.Modules.Login = (function()
 {

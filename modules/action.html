@@ -201,7 +201,7 @@
             const objResponseData = objResponse.value;
 
             // hide loader
-            App.Helpers.UI.toggleHorizontalLoader(_$grdActions, 'reset');
+            App.Components.HorizontalLoader.toggleState(_$grdActions, 'reset');
 
             // success
             if(objResponse.code === App.Request.ResponseCode.OK)
@@ -225,7 +225,7 @@
             const objResponseData = objResponse.value;
 
             // reset activated button
-            App.Helpers.UI.toggleButtonState(null, 'reset');
+            App.Components.Button.toggleState(null, 'reset');
 
             // success
             if(objResponse.code === App.Request.ResponseCode.OK)
@@ -284,7 +284,7 @@
                 }
 
                 // reset save button
-                App.Helpers.UI.toggleButtonState(_$btnSave, 'reset');
+                App.Components.Button.toggleState(_$btnSave, 'reset');
             }
         }
 
@@ -325,7 +325,7 @@
                 }
 
                 // reset save button
-                App.Helpers.UI.toggleButtonState(_$btnSave, 'reset');
+                App.Components.Button.toggleState(_$btnSave, 'reset');
             }
         }
 
@@ -367,7 +367,7 @@
             _$hdnId.val("");
             _$txtName.val("");
             _$txtDesc.val("");
-            App.Helpers.UI.toggleButtonState(_$btnSave, 'reset');
+            App.Components.Button.toggleState(_$btnSave, 'reset');
         }
 
 
@@ -439,7 +439,7 @@
         function _getItem(objEditButton)
         {
             // disable edit button
-            App.Helpers.UI.toggleButtonState(objEditButton, 'loading');
+            App.Components.Button.toggleState(objEditButton, 'loading');
 
             // make the action item get request
             const objData = {
@@ -468,7 +468,7 @@
             };
 
             // disable save button
-            App.Helpers.UI.toggleButtonState(_$btnSave, 'loading');
+            App.Components.Button.toggleState(_$btnSave, 'loading');
 
             if(_blnAdd)
             {
@@ -505,7 +505,7 @@
             $('[data-toggle="popover"]').popover();
 
             // show loader
-            App.Helpers.UI.toggleHorizontalLoader(_$grdActions, 'loading');
+            App.Components.HorizontalLoader.toggleState(_$grdActions, 'loading');
 
             // make the get list request
             App.Request.get('action_list', App.Settings.ApiEndpoints.ACTION_GET_LIST, {});
