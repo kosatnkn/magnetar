@@ -94,7 +94,6 @@ App.Settings = (function()
     return {
         AppName: AppName,
         SessionTimeout: SessionTimeout,
-        ApiUrl: ApiUrl,
         UserAction: UserAction,
         FilterOperator: FilterOperator,
         ApiEndpoints: ApiEndpoints
@@ -321,8 +320,7 @@ App.Events = (function()
     return {
         on: function(eventName, fn) { on(eventName, fn); },
         off: function(eventName, fn) { off(eventName, fn); },
-        emit: function(eventName, data) { emit(eventName, data); },
-        events: events
+        emit: function(eventName, data) { emit(eventName, data); }
     };
 
 })();
