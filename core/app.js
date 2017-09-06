@@ -1508,7 +1508,7 @@ App.Modules.Login = (function()
     {
         _$txtEmail.val('');
         _$txtPassword.val('');
-        App.Helpers.UI.toggleButtonState(_$btnLogin, 'reset');
+        App.Components.Button.toggleState(_$btnLogin, 'reset');
     }
 
 
@@ -1530,7 +1530,7 @@ App.Modules.Login = (function()
         };
 
         // disable login button
-        App.Helpers.UI.toggleButtonState(_$btnLogin, 'loading');
+        App.Components.Button.toggleState(_$btnLogin, 'loading');
 
         // make the authentication request
         App.Request.post('login_auth', App.Settings.ApiEndpoints.AUTH, objData);
@@ -1574,7 +1574,7 @@ App.Modules.Login = (function()
             }
 
             // enable login button
-            App.Helpers.UI.toggleButtonState(_$btnLogin, 'reset');
+            App.Components.Button.toggleState(_$btnLogin, 'reset');
         }
     }
 
