@@ -8,7 +8,6 @@
 
 // __________________________________________________________________________________________________________ App Module
 
-
 const App = (function()
 {
     /**
@@ -30,6 +29,7 @@ const App = (function()
         // when session valid, set app status using the urls hash part
         App.Router.init();
     }
+
 
     /**
      * Reset the application to it's default state.
