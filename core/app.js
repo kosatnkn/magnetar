@@ -1,6 +1,6 @@
 /*
- * Magnetar Core v1.0.0
- * 2017.08.18
+ * Magnetar Core v1.1.0
+ * 2018.01.08
  *
  * By Kosala Tennakoon of Sri Lanka
  */
