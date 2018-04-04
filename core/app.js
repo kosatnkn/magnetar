@@ -86,7 +86,13 @@ App.Settings = (function()
 
     // all possible filter operators
     const FilterOperator = {
-        EQUAL: 1
+        EQUAL: 1,
+        NOT_EQUAL: 2,
+        LESS_THAN: 3,
+        LESS_THAN_OR_EQUAL: 4,
+        GREATER_THAN: 5,
+        GREATER_THAN_OR_EQUAL: 6,
+        LIKE: 7
     };
 
 
