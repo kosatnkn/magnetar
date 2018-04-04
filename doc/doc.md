@@ -142,7 +142,14 @@ Following are the main objects of `Magnetar`
 
 #### Components
 
-`App.Components` contain Main Navigation, Side Navigation and Notification.
+`App.Components` contains following reusable components
+- Main Navigation
+- Side Navigation
+- Notification
+- Button
+- Dropdown
+- FileSelector
+- HorizontalLoader
 
 
 #### Events
