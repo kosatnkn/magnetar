@@ -60,7 +60,7 @@ Enjoy!
         |    |- magnetar_logo.png
         |- lib/ (libraries)
         |    |- css/
-        |        |- bootsetap.css
+        |        |- bootstrap.css
         |        |- (other required css files)
         |    |- fonts/
         |        |- (required web fonts)
